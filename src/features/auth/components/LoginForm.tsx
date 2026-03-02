@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
+import axios from "axios"
 
 const loginSchema = z.object({
   username: z.string().min(1, {
@@ -39,11 +40,17 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
     },
   })
 
-  function onSubmit(values: LoginFormValues) {
-    // Mock API call
-    console.log("Login submitted:", values)
-    // Normally we'd call the API here, get token, configure zustand, etc.
-    onSuccess()
+  async function onSubmit(values: LoginFormValues) {
+    try {
+      const response = await axios.post("http://localhost:8000/account/token/", {
+        "email": values.username,
+        "password": values.password
+      })
+      console.log("Login submitted:", response.data)
+      onSuccess()
+    } catch (error) {
+      console.error("Login failed:", error)
+    }
   }
 
   return (
