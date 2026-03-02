@@ -1,3 +1,39 @@
 @import "tailwindcss";
 @import "@radix-ui/themes/styles.css";
 
+@theme {
+  /* --- Fonts --- */
+  /* Registering 'Plus Jakarta Sans' as the primary sans font */
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+
+  
+  /* --- Brand & UI Colors --- */
+  --color-background: #f8fafc;
+  --color-foreground: #0f172a;
+  
+  --color-primary: #4f46e5;
+  --color-primary-foreground: #ffffff;
+
+  --color-card: #ffffff;
+  --color-card-border: #e2e8f0;
+
+  /* --- Status Colors (Extracted from your image) --- */
+  /* High Priority (Red) */
+  --color-status-high-bg: #fef2f2;
+  --color-status-high-text: #ef4444;
+
+  /* Website/Success (Green) */
+  --color-status-web-bg: #f0fdf4;
+  --color-status-web-text: #22c55e;
+
+  /* In-Progress/Info (Blue) */
+  --color-status-progress-bg: #eff6ff;
+  --color-status-progress-text: #3b82f6;
+
+  /* Muted Text/Percentages */
+  --color-muted: #64748b;
+
+  /* --- Interface Spacing/Radius --- */
+  --radius-xl: 0.75rem;
+  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
