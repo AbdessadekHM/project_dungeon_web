@@ -1,35 +1,64 @@
-import { Outlet, Navigate, Link, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Navigate, Outlet, useLocation, useNavigate, Link } from 'react-router-dom';
+import { useAppStore } from '@/stores/useAppStore';
 import { useAuthStore } from '@/features/auth/stores/useAuthStore';
+import { projectApi } from '@/features/projects/api';
+import type { Project } from '@/features/projects/types';
 import { 
-  Users, LayoutDashboard, LogOut, Menu
+  Menu, LogOut, CheckCircle2, CalendarDays, Github
 } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { 
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu';
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue
+} from '@/components/ui/select';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { ModeToggle } from '@/components/mode-toggle';
 import logo from '@/assets/logo.png';
 
-export function ProtectedLayout() {
+export function ProjectLayout() {
   const { isAuthenticated, user, clearAuth } = useAuthStore();
+  const { selectedProject, setSelectedProject } = useAppStore();
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const [projects, setProjects] = useState<Project[]>([]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      projectApi.getProjects().then(setProjects).catch(console.error);
+    }
+  }, [isAuthenticated]);
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
 
+  // If no project is selected, bounce back to dashboard
+  if (!selectedProject) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
   const navItems = [
-    { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { path: '/teams', label: 'Teams', icon: Users },
+    { path: `/projects/${selectedProject.id}/tasks`, label: 'Dashboard', icon: CheckCircle2 },
+    { path: `/projects/${selectedProject.id}/events`, label: 'Events', icon: CalendarDays },
+    { path: `/projects/${selectedProject.id}/repositories`, label: 'Repositories', icon: Github },
   ];
 
   const SidebarContent = () => (
     <>
       <div className="h-16 flex items-center px-6 border-b border-border/50 gap-3">
-        <img src={logo} alt="Project Dungeon" className="h-8 w-8" />
-        <span className="font-bold text-lg tracking-tight text-foreground">Project Dungeon</span>
+        <img src={logo} alt="Project Dungeon" className="h-8 w-8 cursor-pointer" onClick={() => setSelectedProject(null)} />
+        <span 
+          className="font-bold text-lg tracking-tight text-foreground cursor-pointer hover:text-primary transition-colors truncate"
+          onClick={() => setSelectedProject(null)}
+          title="Back to Main Dashboard"
+        >
+          Project Dungeon
+        </span>
       </div>
       
       <nav className="flex-1 overflow-y-auto py-6 px-3 space-y-1">
@@ -55,6 +84,16 @@ export function ProtectedLayout() {
           );
         })}
       </nav>
+      
+      <div className="p-4 border-t border-border/50">
+         <Button 
+           variant="outline" 
+           className="w-full justify-start text-muted-foreground hover:text-foreground"
+           onClick={() => setSelectedProject(null)}
+         >
+           Exit Project
+         </Button>
+      </div>
     </>
   );
 
@@ -83,6 +122,40 @@ export function ProtectedLayout() {
                 <SidebarContent />
               </SheetContent>
             </Sheet>
+
+            {selectedProject && (
+              <Select 
+                value={selectedProject.id.toString()} 
+                onValueChange={(val) => {
+                  const proj = projects.find(p => p.id.toString() === val);
+                  if (proj) {
+                    setSelectedProject(proj);
+                    navigate(`/projects/${proj.id}/tasks`);
+                  }
+                }}
+              >
+                <SelectTrigger className="w-[160px] sm:w-[200px] border-border/50 bg-muted/30 hover:bg-muted/50 transition-colors shadow-sm focus:ring-1 focus:ring-primary/30 rounded-lg">
+                  <SelectValue placeholder="Select a project" />
+                </SelectTrigger>
+                <SelectContent align="start" className="border-border/50 shadow-ambient">
+                  {projects.map(project => (
+                    <SelectItem key={project.id} value={project.id.toString()} className="cursor-pointer">
+                      {project.title}
+                    </SelectItem>
+                  ))}
+                  <DropdownMenuSeparator className="bg-border/50" />
+                  <div 
+                    className="p-2 text-sm text-muted-foreground hover:bg-muted/50 hover:text-foreground cursor-pointer rounded-sm transition-colors"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setSelectedProject(null);
+                    }}
+                  >
+                    Clear Selection
+                  </div>
+                </SelectContent>
+              </Select>
+            )}
           </div>
           
           <div className="flex items-center gap-2 sm:gap-4">

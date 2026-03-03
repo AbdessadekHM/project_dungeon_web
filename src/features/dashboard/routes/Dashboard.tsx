@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Plus, LayoutGrid, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -21,6 +22,12 @@ export function Dashboard() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { setSelectedProject } = useAppStore();
+  const navigate = useNavigate();
+
+  const handleProjectSelect = (project: Project) => {
+    setSelectedProject(project);
+    navigate(`/projects/${project.id}/tasks`);
+  };
 
   const fetchProjects = async () => {
     setIsLoading(true);
@@ -82,7 +89,7 @@ export function Dashboard() {
       ) : viewMode === 'grid' ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {projects.map((project) => (
-            <div key={project.id} onClick={() => setSelectedProject(project)}>
+            <div key={project.id} onClick={() => handleProjectSelect(project)}>
               <ProjectCard project={project} />
             </div>
           ))}
@@ -102,7 +109,7 @@ export function Dashboard() {
               {projects.map((project) => (
                 <TableRow 
                   key={project.id} 
-                  onClick={() => setSelectedProject(project)} 
+                  onClick={() => handleProjectSelect(project)} 
                   className="cursor-pointer hover:bg-muted/50 transition-colors"
                 >
                   <TableCell className="font-medium text-foreground">{project.title}</TableCell>
