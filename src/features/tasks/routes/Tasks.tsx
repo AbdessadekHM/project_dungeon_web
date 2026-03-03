@@ -45,6 +45,20 @@ export function Tasks() {
     }
   };
 
+  const handleTaskUpdate = async (taskId: number, newStatus: Task['status']) => {
+    // Optimistic UI Update
+    setTasks(prevTasks => prevTasks.map(t => 
+      t.id === taskId ? { ...t, status: newStatus } : t
+    ));
+
+    try {
+      await taskApi.updateTask(taskId, { status: newStatus });
+    } catch (error) {
+      console.error('Failed to update task status:', error);
+      fetchData(); // Revert on failure
+    }
+  };
+
   return (
     <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -85,7 +99,7 @@ export function Tasks() {
           <p className="text-muted-foreground">Loading tasks...</p>
         </div>
       ) : viewMode === 'list' ? (
-        <TaskTable tasks={tasks} users={users} />
+        <TaskTable tasks={tasks} users={users} onTaskUpdate={handleTaskUpdate} />
       ) : (
         <TaskKanbanBoard tasks={tasks} users={users} />
       )}

@@ -25,8 +25,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
+import MDEditor from '@uiw/react-md-editor';
 import { Loader2 } from 'lucide-react';
 import { taskApi } from '../api';
 import { teamApi } from '@/features/teams/api';
@@ -134,7 +134,7 @@ export function CreateTaskModal({ open, onOpenChange, onSuccess, project }: Crea
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] border-border/50 bg-card/95 backdrop-blur-xl shadow-2xl">
+      <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto border-border/50 bg-card/95 backdrop-blur-xl shadow-2xl">
         <DialogHeader>
           <DialogTitle className="text-xl">Create New Task</DialogTitle>
           <DialogDescription>
@@ -162,14 +162,19 @@ export function CreateTaskModal({ open, onOpenChange, onSuccess, project }: Crea
               control={form.control}
               name="description"
               render={({ field }) => (
-                <FormItem>
+                <FormItem data-color-mode="dark">
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Textarea 
-                      placeholder="Enter task description" 
-                      className="bg-background/50 resize-none h-24" 
-                      {...field} 
-                    />
+                    <div data-color-mode="dark">
+                      <MDEditor
+                        value={field.value}
+                        onChange={field.onChange}
+                        preview="edit"
+                        height={300}
+                        visibleDragbar={false}
+                        className="bg-background!"
+                      />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

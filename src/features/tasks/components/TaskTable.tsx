@@ -24,16 +24,24 @@ import {
   DropdownMenuTrigger,
   DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+// import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import type { Task } from '../types';
 import type { User } from '@/features/projects/types';
 
 interface DataTableProps {
   tasks: Task[];
   users: User[];
+  onTaskUpdate?: (taskId: number, newStatus: Task['status']) => Promise<void> | void;
 }
 
-export function TaskTable({ tasks }: DataTableProps) {
+export function TaskTable({ tasks, onTaskUpdate }: DataTableProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string[]>([]);
   const [priorityFilter, setPriorityFilter] = useState<string[]>([]);
@@ -214,10 +222,28 @@ export function TaskTable({ tasks }: DataTableProps) {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      {getStatusIcon(task.status)}
-                      <span>{formatStatus(task.status)}</span>
-                    </div>
+                    <Select 
+                      defaultValue={task.status} 
+                      onValueChange={(value) => onTaskUpdate?.(task.id, value as Task['status'])}
+                    >
+                      <SelectTrigger className="w-[140px] h-8 bg-transparent border-none shadow-none focus:ring-0 p-0 hover:bg-muted/50 rounded-md data-[state=open]:bg-muted/50 transition-colors">
+                        <div className="flex items-center gap-2 pl-2 text-sm text-muted-foreground">
+                          {/* {getStatusIcon(task.status)} */}
+                          <SelectValue />
+                        </div>
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="todo">
+                          <div className="flex items-center gap-2">{getStatusIcon('todo')} Todo</div>
+                        </SelectItem>
+                        <SelectItem value="in_progress">
+                          <div className="flex items-center gap-2">{getStatusIcon('in_progress')} In Progress</div>
+                        </SelectItem>
+                        <SelectItem value="finished">
+                          <div className="flex items-center gap-2">{getStatusIcon('finished')} Done</div>
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
