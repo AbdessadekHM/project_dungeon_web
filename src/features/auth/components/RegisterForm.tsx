@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
+import axios from "axios"
 
 const registerSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters."),
@@ -46,10 +47,19 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
     },
   })
   
-  function onSubmit(values: RegisterFormValues) {
+  async function onSubmit(values: RegisterFormValues) {
+    console.log(values)
+    const {confirmPassword, ...data} = values
+    console.log(data)
 
-    console.log("Register submitted:", values)
-    onSuccess()
+    try{
+      const response = await axios.post("http://127.0.0.1:8000/account/register/", data)
+      console.log(response.data)
+      console.log(response.status)
+      onSuccess()
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (
