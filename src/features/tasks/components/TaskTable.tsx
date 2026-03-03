@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { 
   ArrowUp, ArrowRight, ArrowDown, 
   Circle, Clock, CheckCircle2, 
-  MoreHorizontal, PlusCircle, Search, SlidersHorizontal, Settings2
+  MoreHorizontal, PlusCircle, Search, Settings2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -33,7 +33,7 @@ interface DataTableProps {
   users: User[];
 }
 
-export function TaskTable({ tasks, users }: DataTableProps) {
+export function TaskTable({ tasks }: DataTableProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string[]>([]);
   const [priorityFilter, setPriorityFilter] = useState<string[]>([]);

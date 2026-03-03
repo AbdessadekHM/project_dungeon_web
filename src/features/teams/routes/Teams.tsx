@@ -1,20 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Plus, LayoutGrid, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { teamApi } from '../api';
 import type { Team, User, Project } from '../types';
 import { TeamCard } from '../components/TeamCard';
 import { CreateTeamModal } from '../components/CreateTeamModal';
 import { EditTeamModal } from '../components/EditTeamModal';
 import { TeamDetailsModal } from '../components/TeamDetailsModal';
+import { TeamTable } from '../components/TeamTable';
 
 export function Teams() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -107,32 +100,7 @@ export function Teams() {
           ))}
         </div>
       ) : (
-        <div className="rounded-xl border border-border/50 bg-card overflow-hidden">
-          <Table>
-            <TableHeader className="bg-muted/30">
-              <TableRow>
-                <TableHead>Team Name</TableHead>
-                <TableHead>Owner ID</TableHead>
-                <TableHead>Projects</TableHead>
-                <TableHead>Members</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {teams.map((team) => (
-                <TableRow 
-                  key={team.id} 
-                  onClick={() => setSelectedTeamForDetails(team)} 
-                  className="cursor-pointer hover:bg-muted/50 transition-colors"
-                >
-                  <TableCell className="font-medium text-foreground">{team.name}</TableCell>
-                  <TableCell className="text-muted-foreground">#{team.owner}</TableCell>
-                  <TableCell>{team.projects.length}</TableCell>
-                  <TableCell>{team.collaborators.length}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+        <TeamTable teams={teams} onTeamSelect={setSelectedTeamForDetails} />
       )}
 
       <CreateTeamModal 

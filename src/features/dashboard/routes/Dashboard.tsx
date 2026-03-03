@@ -2,16 +2,9 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, LayoutGrid, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { ProjectCard } from '@/features/projects/components/ProjectCard';
 import { CreateProjectModal } from '@/features/projects/components/CreateProjectModal';
+import { ProjectTable } from '../components/ProjectTable';
 import { useAppStore } from '@/stores/useAppStore';
 import { projectApi } from '@/features/projects/api';
 import type { Project } from '@/features/projects/types';
@@ -95,32 +88,7 @@ export function Dashboard() {
           ))}
         </div>
       ) : (
-        <div className="rounded-xl border border-border/50 bg-card overflow-hidden">
-          <Table>
-            <TableHeader className="bg-muted/30">
-              <TableRow>
-                <TableHead>Project Name</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Tasks</TableHead>
-                <TableHead>Members</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {projects.map((project) => (
-                <TableRow 
-                  key={project.id} 
-                  onClick={() => handleProjectSelect(project)} 
-                  className="cursor-pointer hover:bg-muted/50 transition-colors"
-                >
-                  <TableCell className="font-medium text-foreground">{project.title}</TableCell>
-                  <TableCell className="text-muted-foreground w-1/3 truncate max-w-[200px]">{project.description}</TableCell>
-                  <TableCell>{project.tasks_count || 0}</TableCell>
-                  <TableCell>{project.collaborators.length + 1}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+        <ProjectTable projects={projects} onProjectSelect={handleProjectSelect} />
       )}
 
       <CreateProjectModal 
