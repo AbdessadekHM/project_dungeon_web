@@ -30,8 +30,8 @@ export function ProtectedLayout() {
 
   // Mock data for the switcher options, ideally this would come from an API query
   const mockProjects = [
-    { id: 1, title: 'Project Alpha', description: 'Main frontend development for the game.', owner: 1, collaborators: [2, 3], tasks_count: 12 },
-    { id: 2, title: 'Backend API', description: 'Django REST framework implementation.', owner: 1, collaborators: [4], tasks_count: 5 },
+    { id: 1, title: 'Project Alpha', description: 'Main frontend development for the game.', owner: 1, collaborators: [2, 3], tasks_count: 12, repositories: [], teams: [] },
+    { id: 2, title: 'Backend API', description: 'Django REST framework implementation.', owner: 1, collaborators: [4], tasks_count: 5, repositories: [], teams: [] },
   ];
 
   return (
