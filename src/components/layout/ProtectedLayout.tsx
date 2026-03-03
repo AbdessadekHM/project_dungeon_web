@@ -1,6 +1,9 @@
+import { useState, useEffect } from 'react';
 import { Outlet, Navigate, Link, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import { useAppStore } from '@/stores/useAppStore';
+import { projectApi } from '@/features/projects/api';
+import type { Project } from '@/features/projects/types';
 import { 
   Users, LayoutDashboard, LogOut, Menu
 } from 'lucide-react';
@@ -30,11 +33,13 @@ export function ProtectedLayout() {
     { path: '/teams', label: 'Teams', icon: Users },
   ];
 
-  // Mock data for the switcher options, ideally this would come from an API query
-  const mockProjects = [
-    { id: 1, title: 'Project Alpha', description: 'Main frontend development for the game.', owner: 1, collaborators: [2, 3], tasks_count: 12, repositories: [], teams: [] },
-    { id: 2, title: 'Backend API', description: 'Django REST framework implementation.', owner: 1, collaborators: [4], tasks_count: 5, repositories: [], teams: [] },
-  ];
+  const [projects, setProjects] = useState<Project[]>([]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      projectApi.getProjects().then(setProjects).catch(console.error);
+    }
+  }, [isAuthenticated]);
 
   const SidebarContent = () => (
     <>
@@ -99,7 +104,7 @@ export function ProtectedLayout() {
               <Select 
                 value={selectedProject.id.toString()} 
                 onValueChange={(val) => {
-                  const proj = mockProjects.find(p => p.id.toString() === val);
+                  const proj = projects.find(p => p.id.toString() === val);
                   if (proj) setSelectedProject(proj);
                 }}
               >
@@ -107,7 +112,7 @@ export function ProtectedLayout() {
                   <SelectValue placeholder="Select a project" />
                 </SelectTrigger>
                 <SelectContent align="start" className="border-border/50 shadow-ambient">
-                  {mockProjects.map(project => (
+                  {projects.map(project => (
                     <SelectItem key={project.id} value={project.id.toString()} className="cursor-pointer">
                       {project.title}
                     </SelectItem>
