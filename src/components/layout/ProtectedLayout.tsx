@@ -1,29 +1,36 @@
 import { Outlet, Navigate, Link, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/features/auth/stores/useAuthStore';
+import { useAppStore } from '@/stores/useAppStore';
 import { 
-  Users, FolderKanban, LayoutDashboard, ChevronDown, LogOut
+  Users, LayoutDashboard, LogOut
 } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { 
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu';
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue
+} from '@/components/ui/select';
 import logo from '@/assets/logo.png';
 
 export function ProtectedLayout() {
   const { isAuthenticated, user, clearAuth } = useAuthStore();
+  const { selectedProject, setSelectedProject } = useAppStore();
   const location = useLocation();
 
   if (!isAuthenticated) {
-    console.log("the user is")
-    console.log(user)
-    console.log("not authenticated")
     return <Navigate to="/login" replace />;
   }
 
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { path: '/projects', label: 'Projects', icon: FolderKanban },
     { path: '/teams', label: 'Teams', icon: Users },
+  ];
+
+  // Mock data for the switcher options, ideally this would come from an API query
+  const mockProjects = [
+    { id: 1, title: 'Project Alpha', description: 'Main frontend development for the game.', owner: 1, collaborators: [2, 3], tasks_count: 12 },
+    { id: 2, title: 'Backend API', description: 'Django REST framework implementation.', owner: 1, collaborators: [4], tasks_count: 5 },
   ];
 
   return (
@@ -62,11 +69,36 @@ export function ProtectedLayout() {
         {/* Navbar */}
         <header className="h-16 border-b border-border bg-card flex items-center justify-between px-6 shrink-0">
           <div className="flex items-center gap-4">
-            {/* Placeholder for Project Switcher */}
-            <div className="h-9 px-3 rounded-md hover:bg-muted/50 flex items-center gap-2 cursor-pointer transition-colors border border-transparent hover:border-border">
-              <span className="text-sm font-medium text-muted-foreground">Select Project</span>
-              <ChevronDown className="h-4 w-4 text-muted-foreground" />
-            </div>
+            {selectedProject && (
+              <Select 
+                value={selectedProject.id.toString()} 
+                onValueChange={(val) => {
+                  const proj = mockProjects.find(p => p.id.toString() === val);
+                  if (proj) setSelectedProject(proj);
+                }}
+              >
+                <SelectTrigger className="w-[200px] border-transparent hover:border-border hover:bg-muted/50 transition-colors shadow-none focus:ring-0">
+                  <SelectValue placeholder="Select a project" />
+                </SelectTrigger>
+                <SelectContent>
+                  {mockProjects.map(project => (
+                    <SelectItem key={project.id} value={project.id.toString()}>
+                      {project.title}
+                    </SelectItem>
+                  ))}
+                  <DropdownMenuSeparator />
+                  <div 
+                    className="p-2 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground cursor-pointer rounded-sm"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setSelectedProject(null);
+                    }}
+                  >
+                    Clear Selection
+                  </div>
+                </SelectContent>
+              </Select>
+            )}
           </div>
           
           <div className="flex items-center gap-4">

@@ -3,9 +3,11 @@ import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ProjectCard } from '@/features/projects/components/ProjectCard';
 import { CreateProjectModal } from '@/features/projects/components/CreateProjectModal';
+import { useAppStore } from '@/stores/useAppStore';
 
 export function Dashboard() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const { setSelectedProject } = useAppStore();
 
   // Mock data for initial UI stage
   const mockProjects = [
@@ -28,7 +30,9 @@ export function Dashboard() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {mockProjects.map(project => (
-          <ProjectCard key={project.id} project={project} />
+          <div key={project.id} onClick={() => setSelectedProject(project)}>
+             <ProjectCard project={project} />
+          </div>
         ))}
       </div>
 

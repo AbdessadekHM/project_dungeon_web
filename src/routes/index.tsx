@@ -21,10 +21,6 @@ export const router = createBrowserRouter([
         element: <Dashboard />
       },
       {
-        path: 'projects',
-        element: <div className="p-8 text-center text-2xl font-bold text-muted-foreground animate-in fade-in">Projects View (Coming Soon)</div>
-      },
-      {
         path: 'teams',
         element: <div className="p-8 text-center text-2xl font-bold text-muted-foreground animate-in fade-in">Teams View (Coming Soon)</div>
       }
