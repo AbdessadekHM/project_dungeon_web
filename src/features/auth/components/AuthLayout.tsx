@@ -1,4 +1,5 @@
 import React from 'react';
+import logo from "@/assets/logo.png"
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -15,8 +16,8 @@ export function AuthLayout({ children, title, description }: AuthLayoutProps) {
       
       <div className="w-full max-w-md relative z-10 transition-all duration-300 animate-in fade-in slide-in-from-bottom-4">
         <div className="flex flex-col items-center space-y-3 mb-8">
-          <div className="h-14 w-14 bg-linear-to-br from-primary to-chart-1 rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20 ring-1 ring-white/10">
-            <span className="text-primary-foreground font-bold text-2xl tracking-tighter">D</span>
+          <div className="h-14 w-14 rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20 ring-1 ring-white/10">
+            <img src={logo} className="h-14 w-14" alt="logo" />
           </div>
           <div className="text-center space-y-1.5">
             <h1 className="text-3xl font-bold tracking-tight text-foreground">{title}</h1>
