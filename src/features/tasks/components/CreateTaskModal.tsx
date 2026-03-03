@@ -37,6 +37,7 @@ const taskSchema = z.object({
   description: z.string().min(1, 'Description is required'),
   status: z.enum(['todo', 'in_progress', 'finished']),
   priority: z.enum(['low', 'medium', 'high']),
+  task_type: z.enum(['feature', 'bug', 'documentation', 'other']),
   deadline: z.string().min(1, 'Deadline is required'),
   assignee: z.string().optional(),
 });
@@ -61,6 +62,7 @@ export function CreateTaskModal({ open, onOpenChange, onSuccess, project }: Crea
       description: '',
       status: 'todo',
       priority: 'low',
+      task_type: 'feature',
       deadline: new Date().toISOString().split('T')[0],
       assignee: 'unassigned' // 'unassigned' is a special value handled before submit
     },
@@ -114,6 +116,7 @@ export function CreateTaskModal({ open, onOpenChange, onSuccess, project }: Crea
         description: data.description,
         status: data.status,
         priority: data.priority,
+        task_type: data.task_type,
         deadline: data.deadline,
         project: project.id,
         assignee: data.assignee && data.assignee !== 'unassigned' ? parseInt(data.assignee) : null
@@ -222,6 +225,30 @@ export function CreateTaskModal({ open, onOpenChange, onSuccess, project }: Crea
             </div>
 
             <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="task_type"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Type</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="bg-background/50">
+                          <SelectValue placeholder="Select type" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="feature">Feature</SelectItem>
+                        <SelectItem value="bug">Bug</SelectItem>
+                        <SelectItem value="documentation">Documentation</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <FormField
                 control={form.control}
                 name="deadline"

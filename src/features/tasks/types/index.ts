@@ -4,6 +4,7 @@ export interface Task {
   description: string;
   status: 'todo' | 'in_progress' | 'finished';
   priority: 'low' | 'medium' | 'high';
+  task_type: 'feature' | 'bug' | 'documentation' | 'other';
   project: number; // Project ID
   assignee: number | null; // User ID
   deadline: string; // Date string YYYY-MM-DD
