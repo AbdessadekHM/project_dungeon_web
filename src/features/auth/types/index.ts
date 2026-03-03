@@ -4,6 +4,7 @@ export interface User {
   username: string;
   phone: string;
   role: string;
+  birth_date?: string;
 }
 
 export interface AuthResponse {
