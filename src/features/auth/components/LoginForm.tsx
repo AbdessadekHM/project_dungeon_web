@@ -15,6 +15,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
 import axios from "axios"
+import { useAuthStore } from "../stores/useAuthStore"
 
 const loginSchema = z.object({
   username: z.string().min(1, {
@@ -42,11 +43,13 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
 
   async function onSubmit(values: LoginFormValues) {
     try {
+      const auth = useAuthStore.getState()
       const response = await axios.post(import.meta.env.VITE_API_URL + "/account/token/", {
         "email": values.username,
         "password": values.password
       })
-      console.log("Login submitted:", response.data)
+      const {user, access, refresh} = response.data
+      auth.setAuth(user, {access, refresh})
       onSuccess()
     } catch (error) {
       console.error("Login failed:", error)
