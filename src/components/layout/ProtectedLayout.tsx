@@ -11,6 +11,7 @@ import {
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue
 } from '@/components/ui/select';
+import { ModeToggle } from '@/components/mode-toggle';
 import logo from '@/assets/logo.png';
 
 export function ProtectedLayout() {
@@ -102,6 +103,7 @@ export function ProtectedLayout() {
           </div>
           
           <div className="flex items-center gap-4">
+            <ModeToggle />
             <DropdownMenu>
               <DropdownMenuTrigger className="outline-none">
                 <Avatar className="h-9 w-9 border border-border shadow-sm transition-transform hover:scale-105 cursor-pointer">
