@@ -30,13 +30,16 @@ export function Dashboard() {
   }, []);
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="flex items-center justify-between">
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Dashboard</h1>
           <p className="text-muted-foreground mt-1 text-sm">Manage your projects and collaborate with your team.</p>
         </div>
-        <Button onClick={() => setIsCreateModalOpen(true)} className="gap-2 shadow-md hover:shadow-primary/20 transition-all">
+        <Button 
+          onClick={() => setIsCreateModalOpen(true)} 
+          className="gap-2 bg-linear-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary shadow-md hover:shadow-lg hover:shadow-primary/20 transition-all font-medium rounded-xl"
+        >
           <Plus className="h-4 w-4" />
           New Project
         </Button>

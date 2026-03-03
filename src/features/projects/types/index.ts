@@ -16,4 +16,5 @@ export interface Project {
   collaborators: number[]; // User IDs
   repositories: number[]; // Repo IDs
   teams: number[]; // Team IDs
+  tasks_count?: number; // Added for UI display
 }
