@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import {
   Table,
   TableBody,
@@ -10,9 +10,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { 
-  ArrowUp, ArrowRight, ArrowDown, 
-  Circle, Clock, CheckCircle2, 
-  MoreHorizontal, PlusCircle, Search, Settings2
+  MoreHorizontal, PlusCircle, Search
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -31,7 +29,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-// import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { StatusBadge } from './StatusBadge';
+import { PriorityBadge } from './PriorityBadge';
+import { TypeBadge } from './TypeBadge';
 import type { Task } from '../types';
 import type { User } from '@/features/projects/types';
 
@@ -39,9 +39,10 @@ interface DataTableProps {
   tasks: Task[];
   users: User[];
   onTaskUpdate?: (taskId: number, newStatus: Task['status']) => Promise<void> | void;
+  onTaskClick?: (task: Task) => void;
 }
 
-export function TaskTable({ tasks, onTaskUpdate }: DataTableProps) {
+export function TaskTable({ tasks, onTaskUpdate, onTaskClick }: DataTableProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string[]>([]);
   const [priorityFilter, setPriorityFilter] = useState<string[]>([]);
@@ -56,40 +57,13 @@ export function TaskTable({ tasks, onTaskUpdate }: DataTableProps) {
     });
   }, [tasks, searchQuery, statusFilter, priorityFilter]);
 
-  const toggleFilter = (filter: string[], setFilter: (f: string[]) => void, value: string) => {
+  const toggleFilter = useCallback((filter: string[], setFilter: (f: string[]) => void, value: string) => {
     if (filter.includes(value)) {
       setFilter(filter.filter(v => v !== value));
     } else {
       setFilter([...filter, value]);
     }
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch(status) {
-      case 'todo': return <Circle className="w-4 h-4 text-muted-foreground" />;
-      case 'in_progress': return <Clock className="w-4 h-4 text-blue-500" />;
-      case 'finished': return <CheckCircle2 className="w-4 h-4 text-green-500" />;
-      default: return <Circle className="w-4 h-4" />;
-    }
-  };
-
-  const getPriorityIcon = (priority: string) => {
-    switch(priority) {
-      case 'high': return <ArrowUp className="w-4 h-4 text-destructive" />;
-      case 'medium': return <ArrowRight className="w-4 h-4 text-amber-500" />;
-      case 'low': return <ArrowDown className="w-4 h-4 text-muted-foreground" />;
-      default: return <ArrowRight className="w-4 h-4" />;
-    }
-  };
-
-  const getTypeBadge = (type: string) => {
-    switch(type) {
-      case 'feature': return <Badge variant="outline" className="font-normal text-xs bg-primary/5 text-primary border-primary/20">Feature</Badge>;
-      case 'bug': return <Badge variant="outline" className="font-normal text-xs bg-destructive/5 text-destructive border-destructive/20">Bug</Badge>;
-      case 'documentation': return <Badge variant="outline" className="font-normal text-xs bg-purple-500/5 text-purple-500 border-purple-500/20">Documentation</Badge>;
-      default: return <Badge variant="outline" className="font-normal text-xs">Other</Badge>;
-    }
-  };
+  }, []);
 
   const formatStatus = (s: string) => s === 'in_progress' ? 'In Progress' : s === 'todo' ? 'Todo' : 'Done';
   const formatPriority = (p: string) => p.charAt(0).toUpperCase() + p.slice(1);
@@ -98,41 +72,41 @@ export function TaskTable({ tasks, onTaskUpdate }: DataTableProps) {
     <div className="space-y-4">
       {/* Toolbar */}
       <div className="flex items-center justify-between">
-        <div className="flex flex-1 items-center space-x-2">
+        <div className="flex flex-1 items-center gap-2">
           <div className="relative w-[150px] lg:w-[250px]">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-2.5 top-2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Filter tasks..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-9 pl-8 bg-background/50 border-border/50"
+              className="h-8 text-[13px] pl-8 bg-card border-border focus-visible:ring-1 focus-visible:ring-primary"
             />
           </div>
           
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="h-9 border-dashed border-border/50 bg-background/50">
-                <PlusCircle className="mr-2 h-4 w-4" />
+              <Button variant="outline" size="sm" className="h-8 border-dashed border-border text-[13px]">
+                <PlusCircle className="mr-2 h-3.5 w-3.5" />
                 Status
                 {statusFilter.length > 0 && (
-                  <Badge variant="secondary" className="ml-2 rounded-sm px-1 font-normal">
+                  <Badge variant="secondary" className="ml-2 rounded-sm px-1 font-normal text-[11px]">
                     {statusFilter.length}
                   </Badge>
                 )}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-[150px]">
-              <DropdownMenuLabel>Filter by status</DropdownMenuLabel>
+            <DropdownMenuContent align="start" className="w-[150px] border-border">
+              <DropdownMenuLabel className="text-[11px] uppercase tracking-wide text-muted-foreground">Filter by status</DropdownMenuLabel>
               <DropdownMenuSeparator />
               {['todo', 'in_progress', 'finished'].map(val => (
                 <DropdownMenuCheckboxItem
                   key={val}
                   checked={statusFilter.includes(val)}
                   onCheckedChange={() => toggleFilter(statusFilter, setStatusFilter, val)}
+                  className="text-[13px]"
                 >
                   <div className="flex items-center gap-2">
-                    {getStatusIcon(val)}
-                    <span>{formatStatus(val)}</span>
+                    <StatusBadge status={val} />
                   </div>
                 </DropdownMenuCheckboxItem>
               ))}
@@ -141,28 +115,28 @@ export function TaskTable({ tasks, onTaskUpdate }: DataTableProps) {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="h-9 border-dashed border-border/50 bg-background/50">
-                <PlusCircle className="mr-2 h-4 w-4" />
+              <Button variant="outline" size="sm" className="h-8 border-dashed border-border text-[13px]">
+                <PlusCircle className="mr-2 h-3.5 w-3.5" />
                 Priority
                 {priorityFilter.length > 0 && (
-                  <Badge variant="secondary" className="ml-2 rounded-sm px-1 font-normal">
+                  <Badge variant="secondary" className="ml-2 rounded-sm px-1 font-normal text-[11px]">
                     {priorityFilter.length}
                   </Badge>
                 )}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-[150px]">
-              <DropdownMenuLabel>Filter by priority</DropdownMenuLabel>
+            <DropdownMenuContent align="start" className="w-[150px] border-border">
+              <DropdownMenuLabel className="text-[11px] uppercase tracking-wide text-muted-foreground">Filter by priority</DropdownMenuLabel>
               <DropdownMenuSeparator />
               {['low', 'medium', 'high'].map(val => (
                 <DropdownMenuCheckboxItem
                   key={val}
                   checked={priorityFilter.includes(val)}
                   onCheckedChange={() => toggleFilter(priorityFilter, setPriorityFilter, val)}
+                  className="text-[13px]"
                 >
                   <div className="flex items-center gap-2">
-                    {getPriorityIcon(val)}
-                    <span>{formatPriority(val)}</span>
+                    <PriorityBadge priority={val} />
                   </div>
                 </DropdownMenuCheckboxItem>
               ))}
@@ -173,97 +147,92 @@ export function TaskTable({ tasks, onTaskUpdate }: DataTableProps) {
             <Button 
               variant="ghost" 
               onClick={() => { setStatusFilter([]); setPriorityFilter([]); setSearchQuery(''); }}
-              className="h-9 px-2 text-muted-foreground lg:px-3"
+              className="h-8 px-2 text-muted-foreground text-[13px]"
             >
               Reset
             </Button>
           )}
         </div>
-        
-        <div className="flex items-center space-x-2">
-          <Button variant="outline" size="sm" className="h-9 hidden md:flex">
-            <Settings2 className="mr-2 h-4 w-4" />
-            View
-          </Button>
-        </div>
       </div>
 
       {/* Table Content */}
-      <div className="rounded-md border border-border/50 bg-card overflow-hidden">
+      <div className="rounded-lg border border-border bg-card overflow-hidden">
         <Table>
-          <TableHeader className="bg-muted/30 hover:bg-muted/30">
-            <TableRow className="border-border/50">
-              <TableHead className="w-[80px]">Task</TableHead>
-              <TableHead className="min-w-[400px]">Title</TableHead>
-              <TableHead className="w-[150px]">Status</TableHead>
-              <TableHead className="w-[150px]">Priority</TableHead>
-              <TableHead className="w-[50px]"></TableHead>
+          <TableHeader>
+            <TableRow className="border-border bg-secondary/30 hover:bg-secondary/30">
+              <TableHead className="w-[90px] text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2">Task</TableHead>
+              <TableHead className="min-w-[300px] text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2">Title</TableHead>
+              <TableHead className="w-[150px] text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2">Status</TableHead>
+              <TableHead className="w-[120px] text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2">Priority</TableHead>
+              <TableHead className="w-[50px] px-4 py-2"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredTasks.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
+                <TableCell colSpan={5} className="h-24 text-center text-muted-foreground text-[13px]">
                   No tasks found.
                 </TableCell>
               </TableRow>
             ) : (
               filteredTasks.map((task) => (
-                <TableRow key={task.id} className="border-border/20 hover:bg-muted/30 group">
-                  <TableCell className="font-medium text-muted-foreground text-sm">
+                <TableRow 
+                  key={task.id} 
+                  className="group border-b border-border hover:bg-secondary/50 transition-colors duration-150 relative"
+                >
+                  {/* Left accent bar on hover */}
+                  <td className="absolute left-0 top-0 h-full w-0.5 bg-primary opacity-0 group-hover:opacity-100 transition-opacity duration-150" />
+                  
+                  <TableCell className="font-mono text-[12px] text-muted-foreground w-[90px] px-4">
                     TASK-{task.id.toString().padStart(4, '0')}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="px-4">
                     <div className="flex items-center gap-2">
-                      {getTypeBadge(task.task_type || 'other')}
-                      <span className="font-medium truncate max-w-[500px]" title={task.title}>
+                      <TypeBadge type={task.task_type || 'other'} />
+                      <span className="text-[13px] font-medium text-foreground truncate max-w-[500px]" title={task.title}>
                         {task.title}
                       </span>
                     </div>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="px-4">
                     <Select 
                       defaultValue={task.status} 
                       onValueChange={(value) => onTaskUpdate?.(task.id, value as Task['status'])}
                     >
-                      <SelectTrigger className="w-[140px] h-8 bg-transparent border-none shadow-none focus:ring-0 p-0 hover:bg-muted/50 rounded-md data-[state=open]:bg-muted/50 transition-colors">
-                        <div className="flex items-center gap-2 pl-2 text-sm text-muted-foreground">
-                          {/* {getStatusIcon(task.status)} */}
-                          <SelectValue />
+                      <SelectTrigger className="w-[140px] h-8 bg-transparent border-none shadow-none focus:ring-0 p-0 hover:bg-secondary/50 rounded-md data-[state=open]:bg-secondary/50 transition-colors">
+                        <div className="flex items-center gap-2 pl-1">
+                          <StatusBadge status={task.status} />
                         </div>
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="border-border">
                         <SelectItem value="todo">
-                          <div className="flex items-center gap-2">{getStatusIcon('todo')} Todo</div>
+                          <StatusBadge status="todo" />
                         </SelectItem>
                         <SelectItem value="in_progress">
-                          <div className="flex items-center gap-2">{getStatusIcon('in_progress')} In Progress</div>
+                          <StatusBadge status="in_progress" />
                         </SelectItem>
                         <SelectItem value="finished">
-                          <div className="flex items-center gap-2">{getStatusIcon('finished')} Done</div>
+                          <StatusBadge status="finished" />
                         </SelectItem>
                       </SelectContent>
                     </Select>
                   </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      {getPriorityIcon(task.priority)}
-                      <span>{formatPriority(task.priority)}</span>
-                    </div>
+                  <TableCell className="px-4">
+                    <PriorityBadge priority={task.priority} />
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="px-4">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button variant="ghost" className="h-7 w-7 p-0 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
                           <span className="sr-only">Open menu</span>
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem>Edit Task</DropdownMenuItem>
+                      <DropdownMenuContent align="end" className="border-border">
+                        <DropdownMenuLabel className="text-[11px] uppercase tracking-wide text-muted-foreground">Actions</DropdownMenuLabel>
+                        <DropdownMenuItem onClick={() => onTaskClick?.(task)} className="text-[13px] cursor-pointer">Edit Task</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-destructive">Delete Task</DropdownMenuItem>
+                        <DropdownMenuItem className="text-destructive text-[13px] cursor-pointer">Delete Task</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>

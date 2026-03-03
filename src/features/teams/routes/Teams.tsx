@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, LayoutGrid, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import { teamApi } from '../api';
 import type { Team, User, Project } from '../types';
 import { TeamCard } from '../components/TeamCard';
@@ -44,39 +45,59 @@ export function Teams() {
   }, []);
 
   const handleEditClick = () => {
-    // Transfer from Details to Edit modal
     const team = selectedTeamForDetails;
     setSelectedTeamForDetails(null);
     setSelectedTeamForEdit(team);
   };
 
   return (
-    <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="p-4 sm:p-6 max-w-7xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Teams</h1>
-          <p className="text-muted-foreground mt-1 text-sm">Organize collaborators and manage project access.</p>
+          <h1 className="text-[15px] font-semibold tracking-tight text-foreground">Teams</h1>
+          <p className="text-muted-foreground mt-0.5 text-[13px]">Organize collaborators and manage project access.</p>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center bg-muted/50 p-1 rounded-lg border border-border/50">
-            <button
+        <div className="flex items-center gap-2">
+          {/* View Toggle */}
+          <div className="flex items-center bg-secondary/50 p-0.5 rounded-md border border-border">
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={() => setViewMode('grid')}
-              className={`p-2 rounded-md transition-all ${viewMode === 'grid' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+              className={cn(
+                "h-7 w-7 rounded-sm transition-all duration-150",
+                viewMode === 'grid' 
+                  ? 'bg-card shadow-sm text-foreground' 
+                  : 'text-muted-foreground hover:text-foreground'
+              )}
             >
-              <LayoutGrid className="h-4 w-4" />
-            </button>
-            <button
+              <LayoutGrid className="h-3.5 w-3.5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={() => setViewMode('list')}
-              className={`p-2 rounded-md transition-all ${viewMode === 'list' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+              className={cn(
+                "h-7 w-7 rounded-sm transition-all duration-150",
+                viewMode === 'list' 
+                  ? 'bg-card shadow-sm text-foreground' 
+                  : 'text-muted-foreground hover:text-foreground'
+              )}
             >
-              <List className="h-4 w-4" />
-            </button>
+              <List className="h-3.5 w-3.5" />
+            </Button>
           </div>
+
           <Button 
             onClick={() => setIsCreateModalOpen(true)} 
-            className="gap-2 bg-linear-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary shadow-md hover:shadow-lg hover:shadow-primary/20 transition-all font-medium rounded-xl"
+            className={cn(
+              "h-8 rounded-md text-[13px] font-medium gap-1.5",
+              "bg-gradient-to-br from-indigo-500 to-violet-600 text-white",
+              "hover:brightness-110 hover:shadow-[0_0_0_3px_var(--accent-glow)]",
+              "transition-all duration-150"
+            )}
           >
-            <Plus className="h-4 w-4" />
+            <Plus className="h-3.5 w-3.5" />
             Create Team
           </Button>
         </div>
@@ -84,15 +105,15 @@ export function Teams() {
 
       {isLoading ? (
         <div className="flex justify-center p-12">
-          <p className="text-muted-foreground animate-pulse">Loading teams...</p>
+          <p className="text-muted-foreground text-[13px] animate-pulse">Loading teams...</p>
         </div>
       ) : teams.length === 0 ? (
-        <div className="text-center p-12 border border-dashed rounded-xl bg-muted/10 shadow-sm">
-           <p className="text-muted-foreground mb-4">You have no teams yet.</p>
-           <Button variant="outline" onClick={() => setIsCreateModalOpen(true)}>Create your first team</Button>
+        <div className="text-center p-12 border border-dashed border-border rounded-lg bg-secondary/10">
+           <p className="text-muted-foreground mb-4 text-[13px]">You have no teams yet.</p>
+           <Button variant="outline" onClick={() => setIsCreateModalOpen(true)} className="text-[13px] border-border">Create your first team</Button>
         </div>
       ) : viewMode === 'grid' ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {teams.map((team) => (
             <div key={team.id} onClick={() => setSelectedTeamForDetails(team)}>
               <TeamCard team={team} />

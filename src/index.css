@@ -7,7 +7,8 @@
 
 @theme {
   /* --- Fonts --- */
-  --font-sans: "Geist", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
   /* --- Status Colors --- */
   --color-status-high-bg: #fef2f2;
@@ -62,80 +63,146 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  /* --- Premium Design Token Colors --- */
+  --color-accent-glow: var(--accent-glow);
+  --color-accent-subtle: var(--accent-subtle);
 }
 
 :root {
   --radius: 0.75rem;
-  /* Modern Project Management Light Theme (Zinc + Indigo) */
-  --background: #fafafa;
-  --foreground: #09090b;
-  --card: #ffffff;
-  --card-foreground: #09090b;
-  --popover: #ffffff;
-  --popover-foreground: #09090b;
-  /* Primary: Indigo-600 */
-  --primary: #4f46e5;
+
+  /* Modern Project Management Light Theme */
+  --background: #F7F7F8;
+  --foreground: #0F0F12;
+  --card: #FFFFFF;
+  --card-foreground: #0F0F12;
+  --popover: #FFFFFF;
+  --popover-foreground: #0F0F12;
+  --primary: #5E6AD2;
   --primary-foreground: #ffffff;
-  --secondary: #f4f4f5;
-  --secondary-foreground: #18181b;
-  --muted: #f4f4f5;
-  --muted-foreground: #71717a;
-  --accent: #f4f4f5;
-  --accent-foreground: #18181b;
+  --secondary: #F0F0F2;
+  --secondary-foreground: #0F0F12;
+  --muted: #F0F0F2;
+  --muted-foreground: #5C5C6E;
+  --accent: #F0F0F2;
+  --accent-foreground: #0F0F12;
   --destructive: #ef4444;
   --destructive-foreground: #f8fafc;
-  --border: #e4e4e7;
-  --input: #e4e4e7;
-  --ring: #4f46e5;
-  --chart-1: #4f46e5;
+  --border: #E4E4E8;
+  --input: #E4E4E8;
+  --ring: #5E6AD2;
+  --chart-1: #5E6AD2;
   --chart-2: #2dd4bf;
   --chart-3: #f59e0b;
   --chart-4: #ec4899;
   --chart-5: #8b5cf6;
-  --sidebar: #fafafa;
-  --sidebar-foreground: #09090b;
-  --sidebar-primary: #4f46e5;
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #0F0F12;
+  --sidebar-primary: #5E6AD2;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f4f4f5;
-  --sidebar-accent-foreground: #18181b;
-  --sidebar-border: #e4e4e7;
-  --sidebar-ring: #4f46e5;
+  --sidebar-accent: #F0F0F2;
+  --sidebar-accent-foreground: #0F0F12;
+  --sidebar-border: #E4E4E8;
+  --sidebar-ring: #5E6AD2;
+
+  /* --- Accent Glow --- */
+  --accent-glow: rgba(94, 106, 210, 0.12);
+  --accent-subtle: rgba(94, 106, 210, 0.08);
+
+  /* --- Status Tokens --- */
+  --status-todo: #6B7280;
+  --status-todo-bg: rgba(107,114,128,0.08);
+  --status-progress: #D97706;
+  --status-progress-bg: rgba(217,119,6,0.08);
+  --status-done: #059669;
+  --status-done-bg: rgba(5,150,105,0.08);
+
+  /* --- Priority Tokens --- */
+  --priority-low: #9CA3AF;
+  --priority-medium: #F59E0B;
+  --priority-high: #EF4444;
+
+  /* --- Badge Tokens --- */
+  --badge-feature-color: #5E6AD2;
+  --badge-feature-bg: rgba(94,106,210,0.08);
+  --badge-feature-border: rgba(94,106,210,0.20);
+  --badge-bug-color: #EF4444;
+  --badge-bug-bg: rgba(239,68,68,0.08);
+  --badge-bug-border: rgba(239,68,68,0.20);
+  --badge-doc-color: #8B5CF6;
+  --badge-doc-bg: rgba(139,92,246,0.08);
+  --badge-doc-border: rgba(139,92,246,0.20);
+  --badge-other-color: #6B7280;
+  --badge-other-bg: rgba(107,114,128,0.08);
+  --badge-other-border: rgba(107,114,128,0.18);
 }
 
 .dark {
   /* Modern Project Management Dark Theme */
-  --background: #09090b;
-  --foreground: #fafafa;
-  --card: #121215;
-  --card-foreground: #fafafa;
-  --popover: #121215;
-  --popover-foreground: #fafafa;
-  --primary: #6366f1;
+  --background: #0F0F10;
+  --foreground: #F0F0F2;
+  --card: #161618;
+  --card-foreground: #F0F0F2;
+  --popover: #161618;
+  --popover-foreground: #F0F0F2;
+  --primary: #818CF8;
   --primary-foreground: #ffffff;
-  --secondary: #27272a;
-  --secondary-foreground: #fafafa;
-  --muted: #27272a;
-  --muted-foreground: #a1a1aa;
-  --accent: #27272a;
-  --accent-foreground: #fafafa;
+  --secondary: #1C1C1F;
+  --secondary-foreground: #F0F0F2;
+  --muted: #1C1C1F;
+  --muted-foreground: #8A8A9A;
+  --accent: #1C1C1F;
+  --accent-foreground: #F0F0F2;
   --destructive: #7f1d1d;
   --destructive-foreground: #fafafa;
-  --border: #27272a;
-  --input: #27272a;
-  --ring: #6366f1;
-  --chart-1: #6366f1;
+  --border: #2A2A2F;
+  --input: #2A2A2F;
+  --ring: #818CF8;
+  --chart-1: #818CF8;
   --chart-2: #2dd4bf;
   --chart-3: #fbbf24;
   --chart-4: #f472b6;
   --chart-5: #a78bfa;
-  --sidebar: #09090b;
-  --sidebar-foreground: #fafafa;
-  --sidebar-primary: #6366f1;
+  --sidebar: #161618;
+  --sidebar-foreground: #F0F0F2;
+  --sidebar-primary: #818CF8;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #27272a;
-  --sidebar-accent-foreground: #fafafa;
-  --sidebar-border: #27272a;
-  --sidebar-ring: #6366f1;
+  --sidebar-accent: #1C1C1F;
+  --sidebar-accent-foreground: #F0F0F2;
+  --sidebar-border: #2A2A2F;
+  --sidebar-ring: #818CF8;
+
+  /* --- Accent Glow --- */
+  --accent-glow: rgba(129, 140, 248, 0.15);
+  --accent-subtle: rgba(129, 140, 248, 0.10);
+
+  /* --- Status Tokens --- */
+  --status-todo: #9CA3AF;
+  --status-todo-bg: rgba(156,163,175,0.08);
+  --status-progress: #F59E0B;
+  --status-progress-bg: rgba(245,158,11,0.10);
+  --status-done: #10B981;
+  --status-done-bg: rgba(16,185,129,0.10);
+
+  /* --- Priority Tokens --- */
+  --priority-low: #6B7280;
+  --priority-medium: #F59E0B;
+  --priority-high: #EF4444;
+
+  /* --- Badge Tokens --- */
+  --badge-feature-color: #818CF8;
+  --badge-feature-bg: rgba(129,140,248,0.10);
+  --badge-feature-border: rgba(129,140,248,0.20);
+  --badge-bug-color: #F87171;
+  --badge-bug-bg: rgba(248,113,113,0.10);
+  --badge-bug-border: rgba(248,113,113,0.20);
+  --badge-doc-color: #A78BFA;
+  --badge-doc-bg: rgba(167,139,250,0.10);
+  --badge-doc-border: rgba(167,139,250,0.20);
+  --badge-other-color: #9CA3AF;
+  --badge-other-bg: rgba(156,163,175,0.08);
+  --badge-other-border: rgba(156,163,175,0.15);
 }
 
 @layer base {

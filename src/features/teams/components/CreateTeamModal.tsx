@@ -7,6 +7,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 
 interface CreateTeamModalProps {
@@ -31,8 +32,8 @@ export function CreateTeamModal({ open, onOpenChange, onSuccess }: CreateTeamMod
       await teamApi.createTeam({
         name: data.name,
         description: data.description,
-        owner: user?.id || 1, // Fallback if user store missing ID
-        collaborators: [], // Empty initially
+        owner: user?.id || 1,
+        collaborators: [],
         projects: [], 
       });
       reset();
@@ -40,7 +41,6 @@ export function CreateTeamModal({ open, onOpenChange, onSuccess }: CreateTeamMod
       onOpenChange(false);
     } catch (error) {
       console.error('Failed to create team', error);
-      // Ideally show toast
     } finally {
       setIsSubmitting(false);
     }
@@ -48,41 +48,51 @@ export function CreateTeamModal({ open, onOpenChange, onSuccess }: CreateTeamMod
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] border-border bg-card shadow-lg">
         <DialogHeader>
-          <DialogTitle>Create New Team</DialogTitle>
-          <DialogDescription>
-            Give your team a name and description to get started. You can add collaborators and assign projects later.
+          <DialogTitle className="text-[15px] font-semibold">Create New Team</DialogTitle>
+          <DialogDescription className="text-[13px]">
+            Give your team a name and description to get started.
           </DialogDescription>
         </DialogHeader>
         
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pt-4">
           <div className="space-y-2">
-            <label htmlFor="name" className="text-sm font-medium">Team Name</label>
+            <label htmlFor="name" className="text-[13px] font-medium">Team Name</label>
             <Input 
               id="name" 
               placeholder="e.g. Frontend Ninjas"
+              className="bg-secondary/30 border-border text-[13px]"
               {...register('name', { required: 'Name is required' })}
             />
-            {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
+            {errors.name && <p className="text-[11px] text-destructive">{errors.name.message}</p>}
           </div>
           
           <div className="space-y-2">
-            <label htmlFor="description" className="text-sm font-medium">Description</label>
+            <label htmlFor="description" className="text-[13px] font-medium">Description</label>
             <Textarea 
               id="description" 
               placeholder="What does this team do?"
-              className="resize-none"
+              className="resize-none bg-secondary/30 border-border text-[13px]"
               {...register('description', { required: 'Description is required' })}
             />
-            {errors.description && <p className="text-xs text-destructive">{errors.description.message}</p>}
+            {errors.description && <p className="text-[11px] text-destructive">{errors.description.message}</p>}
           </div>
 
           <DialogFooter className="pt-4">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="text-[13px] border-border">
               Cancel
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button 
+              type="submit" 
+              disabled={isSubmitting}
+              className={cn(
+                "text-[13px]",
+                "bg-gradient-to-br from-indigo-500 to-violet-600 text-white",
+                "hover:brightness-110 hover:shadow-[0_0_0_3px_var(--accent-glow)]",
+                "transition-all duration-150"
+              )}
+            >
               {isSubmitting ? 'Creating...' : 'Create Team'}
             </Button>
           </DialogFooter>

@@ -5,7 +5,7 @@ import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import { projectApi } from '@/features/projects/api';
 import type { Project } from '@/features/projects/types';
 import { 
-  Menu, LogOut, CheckCircle2, CalendarDays, Github
+  Menu, LogOut, CheckCircle2, CalendarDays, Github, ChevronDown, Settings
 } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { 
@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/select';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import { ModeToggle } from '@/components/mode-toggle';
 import logo from '@/assets/logo.png';
 
@@ -37,7 +38,6 @@ export function ProjectLayout() {
     return <Navigate to="/login" replace />;
   }
 
-  // If no project is selected, bounce back to dashboard
   if (!selectedProject) {
     return <Navigate to="/dashboard" replace />;
   }
@@ -50,18 +50,49 @@ export function ProjectLayout() {
 
   const SidebarContent = () => (
     <>
-      <div className="h-16 flex items-center px-6 border-b border-border/50 gap-3">
-        <img src={logo} alt="Project Dungeon" className="h-8 w-8 cursor-pointer" onClick={() => setSelectedProject(null)} />
+      {/* Logo Row */}
+      <div className="h-14 flex items-center px-5 border-b border-border gap-3">
+        <img src={logo} alt="Project Dungeon" className="h-7 w-7 cursor-pointer" onClick={() => setSelectedProject(null)} />
         <span 
-          className="font-bold text-lg tracking-tight text-foreground cursor-pointer hover:text-primary transition-colors truncate"
+          className="font-semibold text-[14px] tracking-tight text-foreground cursor-pointer hover:text-primary transition-colors truncate"
           onClick={() => setSelectedProject(null)}
           title="Back to Main Dashboard"
         >
           Project Dungeon
         </span>
       </div>
+
+      {/* Project Switcher */}
+      <div className="px-3 pt-4 pb-2">
+        {selectedProject && (
+          <Select 
+            value={selectedProject.id.toString()} 
+            onValueChange={(val) => {
+              const proj = projects.find(p => p.id.toString() === val);
+              if (proj) {
+                setSelectedProject(proj);
+                navigate(`/projects/${proj.id}/tasks`);
+              }
+            }}
+          >
+            <SelectTrigger className="w-full h-9 text-[13px] font-medium border-border bg-secondary/50 hover:bg-secondary transition-colors rounded-md">
+              <SelectValue placeholder="Select a project" />
+            </SelectTrigger>
+            <SelectContent align="start" className="border-border shadow-lg">
+              {projects.map(project => (
+                <SelectItem key={project.id} value={project.id.toString()} className="cursor-pointer text-[13px]">
+                  {project.title}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+      </div>
+
+      <Separator className="mx-3 bg-border" />
       
-      <nav className="flex-1 overflow-y-auto py-6 px-3 space-y-1">
+      {/* Nav Items */}
+      <nav className="flex-1 overflow-y-auto py-3 px-3 space-y-0.5">
         {navItems.map((item) => {
           const isActive = location.pathname.startsWith(item.path);
           const Icon = item.icon;
@@ -69,15 +100,12 @@ export function ProjectLayout() {
             <Link 
               key={item.path}
               to={item.path} 
-              className={`flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-md transition-all relative ${
+              className={`flex items-center gap-3 px-3 py-1.5 text-[13px] font-medium rounded-md transition-all duration-150 relative ${
                 isActive 
-                  ? 'bg-primary/10 text-primary' 
-                  : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
+                  ? 'bg-[var(--accent-subtle)] text-primary' 
+                  : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
               }`}
             >
-              {isActive && (
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-primary rounded-r-md shadow-[0_0_8px_rgba(79,70,229,0.5)]" />
-              )}
               <Icon className={`h-4 w-4 ${isActive ? 'text-primary' : ''}`} />
               {item.label}
             </Link>
@@ -85,13 +113,15 @@ export function ProjectLayout() {
         })}
       </nav>
       
-      <div className="p-4 border-t border-border/50">
+      {/* Exit Project */}
+      <div className="p-3 border-t border-border">
          <Button 
-           variant="outline" 
-           className="w-full justify-start text-muted-foreground hover:text-foreground"
+           variant="ghost" 
+           className="w-full justify-start text-muted-foreground hover:text-foreground text-[13px] h-8"
            onClick={() => setSelectedProject(null)}
          >
-           Exit Project
+            <LogOut className="h-4 w-4 mr-2" />
+            Exit Project
          </Button>
       </div>
     </>
@@ -100,83 +130,49 @@ export function ProjectLayout() {
   return (
     <div className="flex h-screen bg-background text-foreground overflow-hidden">
       {/* Sidebar */}
-      <aside className="hidden md:flex w-64 border-r border-border/50 bg-card/50 backdrop-blur-md shrink-0 flex-col">
+      <aside className="hidden md:flex w-[220px] border-r border-border bg-card shrink-0 flex-col">
         <SidebarContent />
       </aside>
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Navbar */}
-        <header className="h-16 border-b border-border/50 bg-card/90 backdrop-blur-md flex items-center justify-between px-4 sm:px-6 shrink-0 z-10 sticky top-0">
-          <div className="flex items-center gap-2 sm:gap-4">
+        {/* Top Bar */}
+        <header className="h-14 border-b border-border bg-card flex items-center justify-between px-4 sm:px-6 shrink-0 z-10 sticky top-0">
+          <div className="flex items-center gap-2 sm:gap-3">
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="md:hidden shrink-0">
-                  <Menu className="h-5 w-5" />
+                <Button variant="ghost" size="icon" className="md:hidden shrink-0 h-8 w-8">
+                  <Menu className="h-4 w-4" />
                   <span className="sr-only">Toggle Menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-64 p-0 shrink-0 flex flex-col bg-card/95 backdrop-blur-xl border-r-border/50">
+              <SheetContent side="left" className="w-[220px] p-0 shrink-0 flex flex-col bg-card border-r-border">
                 <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                 <SheetDescription className="sr-only">Access site navigation</SheetDescription>
                 <SidebarContent />
               </SheetContent>
             </Sheet>
-
-            {selectedProject && (
-              <Select 
-                value={selectedProject.id.toString()} 
-                onValueChange={(val) => {
-                  const proj = projects.find(p => p.id.toString() === val);
-                  if (proj) {
-                    setSelectedProject(proj);
-                    navigate(`/projects/${proj.id}/tasks`);
-                  }
-                }}
-              >
-                <SelectTrigger className="w-[160px] sm:w-[200px] border-border/50 bg-muted/30 hover:bg-muted/50 transition-colors shadow-sm focus:ring-1 focus:ring-primary/30 rounded-lg">
-                  <SelectValue placeholder="Select a project" />
-                </SelectTrigger>
-                <SelectContent align="start" className="border-border/50 shadow-ambient">
-                  {projects.map(project => (
-                    <SelectItem key={project.id} value={project.id.toString()} className="cursor-pointer">
-                      {project.title}
-                    </SelectItem>
-                  ))}
-                  <DropdownMenuSeparator className="bg-border/50" />
-                  <div 
-                    className="p-2 text-sm text-muted-foreground hover:bg-muted/50 hover:text-foreground cursor-pointer rounded-sm transition-colors"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setSelectedProject(null);
-                    }}
-                  >
-                    Clear Selection
-                  </div>
-                </SelectContent>
-              </Select>
-            )}
           </div>
           
-          <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex items-center gap-2">
             <ModeToggle />
             <DropdownMenu>
               <DropdownMenuTrigger className="outline-none">
-                <Avatar className="h-9 w-9 border-2 border-primary/20 hover:border-primary/50 shadow-sm transition-all hover:scale-105 cursor-pointer">
-                  <AvatarFallback className="bg-primary/10 text-primary font-semibold text-xs">
+                <Avatar className="h-8 w-8 border-2 border-border hover:border-primary/50 transition-all duration-150 cursor-pointer">
+                  <AvatarFallback className="bg-primary/10 text-primary font-semibold text-[11px]">
                     {user?.username ? user.username.substring(0, 2).toUpperCase() : 'US'}
                   </AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 mt-2 border-border/50 shadow-ambient">
+              <DropdownMenuContent align="end" className="w-56 mt-2 border-border shadow-lg">
                 <DropdownMenuLabel>
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">{user?.username || 'User'}</p>
-                    <p className="text-xs leading-none text-muted-foreground">{user?.email || 'user@example.com'}</p>
+                    <p className="text-[13px] font-medium leading-none">{user?.username || 'User'}</p>
+                    <p className="text-[11px] leading-none text-muted-foreground">{user?.email || 'user@example.com'}</p>
                   </div>
                 </DropdownMenuLabel>
-                <DropdownMenuSeparator className="bg-border/50" />
-                <DropdownMenuItem onClick={clearAuth} className="text-destructive focus:bg-destructive/10 focus:text-destructive cursor-pointer">
+                <DropdownMenuSeparator className="bg-border" />
+                <DropdownMenuItem onClick={clearAuth} className="text-destructive focus:bg-destructive/10 focus:text-destructive cursor-pointer text-[13px]">
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Log out</span>
                 </DropdownMenuItem>
@@ -186,7 +182,7 @@ export function ProjectLayout() {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-auto bg-background/50">
+        <main className="flex-1 overflow-auto bg-background">
           <Outlet />
         </main>
       </div>

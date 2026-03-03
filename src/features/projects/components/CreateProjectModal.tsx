@@ -49,7 +49,6 @@ export function CreateProjectModal({ open, onOpenChange, onSuccess }: CreateProj
   const [isLoading, setIsLoading] = useState(false);
   const { user: currentUser } = useAuthStore();
   
-  // Combobox state
   const [comboOpen, setComboOpen] = useState(false);
 
   const form = useForm<CreateProjectValues>({
@@ -66,7 +65,6 @@ export function CreateProjectModal({ open, onOpenChange, onSuccess }: CreateProj
   useEffect(() => {
     if (open) {
       projectApi.getUsers().then((fetchedUsers) => {
-        // Filter out the currently logged in user
         const filtered = fetchedUsers.filter(u => u.id !== currentUser?.id);
         setActiveUsers(filtered);
       }).catch((err) => {
@@ -84,7 +82,6 @@ export function CreateProjectModal({ open, onOpenChange, onSuccess }: CreateProj
       onSuccess?.();
     } catch (error) {
       console.error('Failed to create project', error);
-      // In a real app, you'd show a toast error here
     } finally {
       setIsLoading(false);
     }
@@ -92,10 +89,10 @@ export function CreateProjectModal({ open, onOpenChange, onSuccess }: CreateProj
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] border-border bg-card shadow-lg">
         <DialogHeader>
-          <DialogTitle>Create New Project</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-[15px] font-semibold">Create New Project</DialogTitle>
+          <DialogDescription className="text-[13px]">
             Add a new project to your workspace and assign team members.
           </DialogDescription>
         </DialogHeader>
@@ -108,9 +105,9 @@ export function CreateProjectModal({ open, onOpenChange, onSuccess }: CreateProj
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Project Title</FormLabel>
+                    <FormLabel className="text-[13px]">Project Title</FormLabel>
                     <FormControl>
-                      <Input placeholder="E.g. Website Redesign" {...field} />
+                      <Input placeholder="E.g. Website Redesign" className="bg-secondary/30 border-border text-[13px]" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -122,9 +119,9 @@ export function CreateProjectModal({ open, onOpenChange, onSuccess }: CreateProj
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description</FormLabel>
+                    <FormLabel className="text-[13px]">Description</FormLabel>
                     <FormControl>
-                      <Input placeholder="Briefly describe what this project is about..." {...field} />
+                      <Input placeholder="Briefly describe what this project is about..." className="bg-secondary/30 border-border text-[13px]" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -139,7 +136,7 @@ export function CreateProjectModal({ open, onOpenChange, onSuccess }: CreateProj
 
                    return (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Collaborators</FormLabel>
+                    <FormLabel className="text-[13px]">Collaborators</FormLabel>
                     <Popover open={comboOpen} onOpenChange={setComboOpen}>
                         <PopoverTrigger asChild>
                           <FormControl>
@@ -147,12 +144,12 @@ export function CreateProjectModal({ open, onOpenChange, onSuccess }: CreateProj
                               variant="outline"
                               role="combobox"
                               aria-expanded={comboOpen}
-                              className="w-full justify-between font-normal h-auto min-h-10"
+                              className="w-full justify-between font-normal h-auto min-h-10 bg-secondary/30 border-border text-[13px]"
                             >
                                <div className="flex flex-wrap gap-1 items-center max-w-[85%]">
                                   {selectedUsers.length > 0 ? (
                                     selectedUsers.map(user => (
-                                       <Badge key={user.id} variant="secondary" className="mr-1 mb-1"
+                                       <Badge key={user.id} variant="secondary" className="mr-1 mb-1 text-[11px]"
                                          onClick={(e) => {
                                            e.stopPropagation();
                                            field.onChange(field.value.filter(id => id !== user.id));
@@ -163,17 +160,17 @@ export function CreateProjectModal({ open, onOpenChange, onSuccess }: CreateProj
                                        </Badge>
                                     ))
                                   ) : (
-                                    <span className="text-muted-foreground mr-auto text-sm">Select collaborators...</span>
+                                    <span className="text-muted-foreground mr-auto text-[13px]">Select collaborators...</span>
                                   )}
                                </div>
                               <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
-                        <PopoverContent className="w-[450px] p-0" align="start">
+                        <PopoverContent className="w-[450px] p-0 border-border" align="start">
                           <Command>
-                            <CommandInput placeholder="Search user by username or email..." />
-                            <CommandEmpty>No user found.</CommandEmpty>
+                            <CommandInput placeholder="Search user by username or email..." className="text-[13px]" />
+                            <CommandEmpty className="text-[13px]">No user found.</CommandEmpty>
                             <CommandGroup className="max-h-64 overflow-y-auto w-full">
                               {activeUsers.map((user) => {
                                 const isSelected = field.value.includes(user.id);
@@ -187,8 +184,8 @@ export function CreateProjectModal({ open, onOpenChange, onSuccess }: CreateProj
                                       } else {
                                         field.onChange([...field.value, user.id]);
                                       }
-                                      // Optional: setComboOpen(false) if you want single-select behavior
                                     }}
+                                    className="cursor-pointer"
                                   >
                                     <Check
                                       className={cn(
@@ -197,8 +194,8 @@ export function CreateProjectModal({ open, onOpenChange, onSuccess }: CreateProj
                                       )}
                                     />
                                     <div className="flex flex-col">
-                                       <span>{user.username}</span>
-                                       <span className="text-xs text-muted-foreground">{user.email}</span>
+                                       <span className="text-[13px]">{user.username}</span>
+                                       <span className="text-[11px] text-muted-foreground">{user.email}</span>
                                     </div>
                                   </CommandItem>
                                 )
@@ -207,7 +204,7 @@ export function CreateProjectModal({ open, onOpenChange, onSuccess }: CreateProj
                           </Command>
                         </PopoverContent>
                       </Popover>
-                    <FormDescription>Search and select users to collaborate on this project. You are automatically set as the owner.</FormDescription>
+                    <FormDescription className="text-[11px]">Search and select users to collaborate on this project. You are automatically set as the owner.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}}
@@ -215,10 +212,19 @@ export function CreateProjectModal({ open, onOpenChange, onSuccess }: CreateProj
             </div>
             
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
+              <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading} className="text-[13px] border-border">
                 Cancel
               </Button>
-              <Button type="submit" disabled={isLoading}>
+              <Button 
+                type="submit" 
+                disabled={isLoading}
+                className={cn(
+                  "text-[13px]",
+                  "bg-gradient-to-br from-indigo-500 to-violet-600 text-white",
+                  "hover:brightness-110 hover:shadow-[0_0_0_3px_var(--accent-glow)]",
+                  "transition-all duration-150"
+                )}
+              >
                 {isLoading ? 'Creating...' : 'Create Project'}
               </Button>
             </DialogFooter>

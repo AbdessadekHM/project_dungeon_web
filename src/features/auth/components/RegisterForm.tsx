@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
+import { cn } from "@/lib/utils"
 import axios from "axios"
 
 const registerSchema = z.object({
@@ -63,7 +64,7 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
   }
 
   return (
-    <Card className="shadow-xl shadow-black/5 border-border bg-card/60 backdrop-blur-md rounded-2xl relative z-10 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-1">
+    <Card className="shadow-xl shadow-black/5 border-border bg-card/60 backdrop-blur-md rounded-xl relative z-10 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-0.5">
       <CardContent className="pt-6">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -72,9 +73,9 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Username</FormLabel>
+                  <FormLabel className="text-[13px]">Username</FormLabel>
                   <FormControl>
-                    <Input placeholder="johndoe" {...field} />
+                    <Input placeholder="johndoe" className="bg-secondary/30 border-border text-[13px]" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -86,9 +87,9 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel className="text-[13px]">Email</FormLabel>
                   <FormControl>
-                    <Input type="email" placeholder="john@example.com" {...field} />
+                    <Input type="email" placeholder="john@example.com" className="bg-secondary/30 border-border text-[13px]" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -100,9 +101,9 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
               name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Phone Number</FormLabel>
+                  <FormLabel className="text-[13px]">Phone Number</FormLabel>
                   <FormControl>
-                    <Input placeholder="+1234567890" {...field} />
+                    <Input placeholder="+1234567890" className="bg-secondary/30 border-border text-[13px]" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -114,9 +115,9 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel className="text-[13px]">Password</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
+                    <Input type="password" placeholder="••••••••" className="bg-secondary/30 border-border text-[13px]" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -128,9 +129,9 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
               name="confirmPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Confirm Password</FormLabel>
+                  <FormLabel className="text-[13px]">Confirm Password</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
+                    <Input type="password" placeholder="••••••••" className="bg-secondary/30 border-border text-[13px]" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -142,9 +143,9 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
               name="birth_date"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Birth Date</FormLabel>
+                  <FormLabel className="text-[13px]">Birth Date</FormLabel>
                   <FormControl>
-                    <Input type="date" placeholder="Birth Date" {...field}  />
+                    <Input type="date" placeholder="Birth Date" className="bg-secondary/30 border-border text-[13px]" {...field}  />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -152,14 +153,22 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
             />
 
 
-            <Button type="submit" className="w-full mt-6 bg-primary text-primary-foreground hover:bg-primary/90">
+            <Button 
+              type="submit" 
+              className={cn(
+                "w-full mt-6 text-[13px]",
+                "bg-gradient-to-br from-indigo-500 to-violet-600 text-white",
+                "hover:brightness-110 hover:shadow-[0_0_0_3px_var(--accent-glow)]",
+                "transition-all duration-150"
+              )}
+            >
               Create Account
             </Button>
           </form>
         </Form>
         
         <div className="text-center mt-6">
-          <Link to="/login" className="text-sm font-medium text-primary hover:underline">
+          <Link to="/login" className="text-[13px] font-medium text-primary hover:underline">
             Already have an account? Log in
           </Link>
         </div>

@@ -32,6 +32,7 @@ import { Loader2 } from 'lucide-react';
 import { taskApi } from '../api';
 import { teamApi } from '@/features/teams/api';
 import type { User, Project } from '@/features/projects/types';
+import type { Task } from '../types';
 
 const taskSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -45,14 +46,15 @@ const taskSchema = z.object({
 
 type TaskFormValues = z.infer<typeof taskSchema>;
 
-interface CreateTaskModalProps {
+interface EditTaskModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
   project: Project;
+  task: Task | null;
 }
 
-export function CreateTaskModal({ open, onOpenChange, onSuccess, project }: CreateTaskModalProps) {
+export function EditTaskModal({ open, onOpenChange, onSuccess, project, task }: EditTaskModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [assignees, setAssignees] = useState<User[]>([]);
 
@@ -70,11 +72,19 @@ export function CreateTaskModal({ open, onOpenChange, onSuccess, project }: Crea
   });
 
   useEffect(() => {
-    if (open) {
-      form.reset();
+    if (open && task) {
+      form.reset({
+        title: task.title,
+        description: task.description,
+        status: task.status,
+        priority: task.priority,
+        task_type: task.task_type || 'feature',
+        deadline: task.deadline,
+        assignee: task.assignee ? task.assignee.toString() : 'unassigned'
+      });
       fetchAssignees();
     }
-  }, [open, project.id]);
+  }, [open, task, project.id]);
 
   const fetchAssignees = async () => {
     try {
@@ -101,6 +111,7 @@ export function CreateTaskModal({ open, onOpenChange, onSuccess, project }: Crea
   };
 
   const onSubmit = async (data: TaskFormValues) => {
+    if (!task) return;
     setIsSubmitting(true);
     try {
       const payload = {
@@ -114,11 +125,11 @@ export function CreateTaskModal({ open, onOpenChange, onSuccess, project }: Crea
         assignee: data.assignee && data.assignee !== 'unassigned' ? parseInt(data.assignee) : null
       };
       
-      await taskApi.createTask(payload);
+      await taskApi.updateTask(task.id, payload);
       onSuccess();
       onOpenChange(false);
     } catch (error) {
-      console.error('Failed to create task:', error);
+      console.error('Failed to update task:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -128,9 +139,9 @@ export function CreateTaskModal({ open, onOpenChange, onSuccess, project }: Crea
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto border-border bg-card shadow-lg">
         <DialogHeader>
-          <DialogTitle className="text-[15px] font-semibold">Create New Task</DialogTitle>
+          <DialogTitle className="text-[15px] font-semibold">Edit Task</DialogTitle>
           <DialogDescription className="text-[13px]">
-            Add a new task to {project.title}.
+            Update details for {task?.title}.
           </DialogDescription>
         </DialogHeader>
 
@@ -314,7 +325,7 @@ export function CreateTaskModal({ open, onOpenChange, onSuccess, project }: Crea
                 {isSubmitting ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
-                  'Create Task'
+                  'Save Changes'
                 )}
               </Button>
             </div>

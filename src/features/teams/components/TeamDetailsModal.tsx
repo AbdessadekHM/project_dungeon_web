@@ -36,20 +36,20 @@ export function TeamDetailsModal({ team, open, onOpenChange, allUsers, allProjec
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[700px] h-[85vh] flex flex-col p-0 overflow-hidden bg-card/95 backdrop-blur-xl">
+      <DialogContent className="sm:max-w-[700px] h-[85vh] flex flex-col p-0 overflow-hidden border-border bg-card shadow-lg">
         {/* Header section */}
-        <div className="p-6 border-b bg-muted/10 shrink-0">
+        <div className="p-6 border-b border-border bg-secondary/20 shrink-0">
           <div className="flex justify-between items-start gap-4">
             <div>
-              <DialogTitle className="text-2xl font-bold flex items-center gap-3">
+              <DialogTitle className="text-[15px] font-semibold flex items-center gap-3">
                 {team.name}
               </DialogTitle>
-              <DialogDescription className="mt-2 text-base">
+              <DialogDescription className="mt-1.5 text-[13px]">
                 {team.description}
               </DialogDescription>
             </div>
-            <Button variant="outline" size="sm" onClick={onEditClick} className="gap-2 shrink-0 shadow-sm">
-              <Edit className="h-4 w-4" />
+            <Button variant="outline" size="sm" onClick={onEditClick} className="gap-2 shrink-0 text-[13px] border-border">
+              <Edit className="h-3.5 w-3.5" />
               Edit Team
             </Button>
           </div>
@@ -60,24 +60,24 @@ export function TeamDetailsModal({ team, open, onOpenChange, allUsers, allProjec
           
           {/* Members Section */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2 border-b pb-2">
-              <Users className="h-5 w-5 text-primary" />
-              <h3 className="text-lg font-semibold tracking-tight">Team Members</h3>
-              <Badge variant="secondary" className="ml-2 font-mono">{team.collaborators.length + 1}</Badge>
+            <div className="flex items-center gap-2 border-b border-border pb-2">
+              <Users className="h-4 w-4 text-primary" />
+              <h3 className="text-[13px] font-semibold tracking-tight">Team Members</h3>
+              <Badge variant="secondary" className="ml-2 font-mono text-[11px]">{team.collaborators.length + 1}</Badge>
             </div>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {/* Owner Card */}
-              <div className="flex items-center gap-3 p-3 rounded-xl border border-primary/20 bg-primary/5 shadow-sm">
-                 <Avatar>
-                    <AvatarFallback className="bg-primary/20 text-primary font-bold">O</AvatarFallback>
+              <div className="flex items-center gap-3 p-3 rounded-lg border border-primary/20 bg-[var(--accent-subtle)]">
+                 <Avatar className="h-8 w-8">
+                    <AvatarFallback className="bg-primary/20 text-primary text-[11px] font-bold">O</AvatarFallback>
                  </Avatar>
                  <div className="flex flex-col">
                    <div className="flex items-center gap-2">
-                     <span className="font-medium text-sm">{owner?.username || `User #${team.owner}`}</span>
+                     <span className="font-medium text-[13px]">{owner?.username || `User #${team.owner}`}</span>
                      <ShieldUser className="h-3.5 w-3.5 text-primary" />
                    </div>
-                   <span className="text-xs text-muted-foreground">{owner?.email || 'Owner'}</span>
+                   <span className="text-[11px] text-muted-foreground">{owner?.email || 'Owner'}</span>
                  </div>
               </div>
 
@@ -85,15 +85,15 @@ export function TeamDetailsModal({ team, open, onOpenChange, allUsers, allProjec
               {team.collaborators.map(userId => {
                 const c = allUsers.find(u => u.id === userId);
                 return (
-                  <div key={userId} className="flex items-center gap-3 p-3 rounded-xl border bg-card shadow-sm">
-                    <Avatar>
-                        <AvatarFallback className="bg-secondary text-secondary-foreground font-medium">
+                  <div key={userId} className="flex items-center gap-3 p-3 rounded-lg border border-border bg-card">
+                    <Avatar className="h-8 w-8">
+                        <AvatarFallback className="bg-secondary text-secondary-foreground text-[11px] font-medium">
                           {c?.username?.substring(0, 1).toUpperCase() || 'U'}
                         </AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col">
-                      <span className="font-medium text-sm">{c?.username || `User #${userId}`}</span>
-                      <span className="text-xs text-muted-foreground">{c?.email || 'Collaborator'}</span>
+                      <span className="font-medium text-[13px]">{c?.username || `User #${userId}`}</span>
+                      <span className="text-[11px] text-muted-foreground">{c?.email || 'Collaborator'}</span>
                     </div>
                   </div>
                 );
@@ -103,20 +103,19 @@ export function TeamDetailsModal({ team, open, onOpenChange, allUsers, allProjec
 
           {/* Projects Section */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2 border-b pb-2">
-              <h3 className="text-lg font-semibold tracking-tight">Contributing Projects</h3>
-              <Badge variant="secondary" className="ml-2 font-mono">{teamProjects.length}</Badge>
+            <div className="flex items-center gap-2 border-b border-border pb-2">
+              <h3 className="text-[13px] font-semibold tracking-tight">Contributing Projects</h3>
+              <Badge variant="secondary" className="ml-2 font-mono text-[11px]">{teamProjects.length}</Badge>
             </div>
             
             {teamProjects.length === 0 ? (
-              <div className="text-center p-8 rounded-xl border border-dashed bg-muted/5">
-                <p className="text-muted-foreground text-sm">This team is not currently assigned to any projects.</p>
+              <div className="text-center p-8 rounded-lg border border-dashed border-border bg-secondary/10">
+                <p className="text-muted-foreground text-[13px]">This team is not currently assigned to any projects.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {teamProjects.map(project => (
                   <div key={project.id} onClick={() => handleProjectClick(project)}>
-                    {/* Re-use ProjectCard, standardizing look */}
                     <ProjectCard project={project} />
                   </div>
                 ))}

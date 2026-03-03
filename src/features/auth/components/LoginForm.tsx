@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
+import { cn } from "@/lib/utils"
 import axios from "axios"
 import { useAuthStore } from "../stores/useAuthStore"
 
@@ -57,7 +58,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
   }
 
   return (
-    <Card className="shadow-xl shadow-black/5 border-border bg-card/60 backdrop-blur-md rounded-2xl relative z-10 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-1">
+    <Card className="shadow-xl shadow-black/5 border-border bg-card/60 backdrop-blur-md rounded-xl relative z-10 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-0.5">
       <CardContent className="pt-6">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -66,9 +67,9 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Username or Email</FormLabel>
+                  <FormLabel className="text-[13px]">Username or Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter username or email" {...field} />
+                    <Input placeholder="Enter username or email" className="bg-secondary/30 border-border text-[13px]" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -80,26 +81,34 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <div className="flex items-center justify-between">
-                    <FormLabel>Password</FormLabel>
-                    <Link to="#" className="text-sm font-medium text-primary hover:underline">
+                    <FormLabel className="text-[13px]">Password</FormLabel>
+                    <Link to="#" className="text-[12px] font-medium text-primary hover:underline">
                       Forgot password?
                     </Link>
                   </div>
                   <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
+                    <Input type="password" placeholder="••••••••" className="bg-secondary/30 border-border text-[13px]" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full mt-6 bg-primary text-primary-foreground hover:bg-primary/90">
+            <Button 
+              type="submit" 
+              className={cn(
+                "w-full mt-6 text-[13px]",
+                "bg-gradient-to-br from-indigo-500 to-violet-600 text-white",
+                "hover:brightness-110 hover:shadow-[0_0_0_3px_var(--accent-glow)]",
+                "transition-all duration-150"
+              )}
+            >
               Log In
             </Button>
             
           </form>
         </Form>
         <div className="text-center mt-6">
-          <Link to="/register" className="text-sm font-medium text-primary hover:underline">
+          <Link to="/register" className="text-[13px] font-medium text-primary hover:underline">
             Don't have an account? Sign up
           </Link>
         </div>
