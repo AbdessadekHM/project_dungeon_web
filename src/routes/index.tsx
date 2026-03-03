@@ -1,5 +1,7 @@
 import { RouterProvider, createBrowserRouter, Navigate } from 'react-router-dom';
 import { AuthRoutes } from '../features/auth/routes';
+import { ProtectedLayout } from '../components/layout/ProtectedLayout';
+import { Dashboard } from '../features/dashboard/routes/Dashboard';
 
 export const router = createBrowserRouter([
   {
@@ -8,11 +10,25 @@ export const router = createBrowserRouter([
   },
   {
     path: '/',
-    element: <Navigate to="/login" replace />,
-  },
-  {
-    path: '/dashboard',
-    element: <div className="p-8 text-center text-2xl font-bold">Dashboard (Protected Area)</div>,
+    element: <ProtectedLayout />,
+    children: [
+      {
+        index: true,
+        element: <Navigate to="/dashboard" replace />
+      },
+      {
+        path: 'dashboard',
+        element: <Dashboard />
+      },
+      {
+        path: 'projects',
+        element: <div className="p-8 text-center text-2xl font-bold text-muted-foreground animate-in fade-in">Projects View (Coming Soon)</div>
+      },
+      {
+        path: 'teams',
+        element: <div className="p-8 text-center text-2xl font-bold text-muted-foreground animate-in fade-in">Teams View (Coming Soon)</div>
+      }
+    ]
   }
 ]);
 
