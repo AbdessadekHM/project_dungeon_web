@@ -42,7 +42,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
 
   async function onSubmit(values: LoginFormValues) {
     try {
-      const response = await axios.post("http://localhost:8000/account/token/", {
+      const response = await axios.post(import.meta.env.VITE_API_URL + "/account/token/", {
         "email": values.username,
         "password": values.password
       })
