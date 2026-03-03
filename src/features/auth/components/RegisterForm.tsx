@@ -21,6 +21,7 @@ const registerSchema = z.object({
   phone: z.string().min(5, "Phone number is required."),
   password: z.string().min(6, "Password must be at least 6 characters."),
   confirmPassword: z.string().min(6, "Confirm password is required."),
+  birth_date: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"],
@@ -41,11 +42,12 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
       phone: "",
       password: "",
       confirmPassword: "",
+      birth_date: new Date().toISOString(),
     },
   })
-
+  
   function onSubmit(values: RegisterFormValues) {
-    // Mock API call
+
     console.log("Register submitted:", values)
     onSuccess()
   }
@@ -124,6 +126,21 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name="birth_date"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Birth Date</FormLabel>
+                  <FormControl>
+                    <Input type="date" placeholder="Birth Date" {...field}  />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
 
             <Button type="submit" className="w-full mt-6 bg-primary text-primary-foreground hover:bg-primary/90">
               Create Account
