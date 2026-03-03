@@ -1,6 +1,14 @@
 import { useState, useEffect } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, LayoutGrid, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { ProjectCard } from '@/features/projects/components/ProjectCard';
 import { CreateProjectModal } from '@/features/projects/components/CreateProjectModal';
 import { useAppStore } from '@/stores/useAppStore';
@@ -8,6 +16,7 @@ import { projectApi } from '@/features/projects/api';
 import type { Project } from '@/features/projects/types';
 
 export function Dashboard() {
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -36,13 +45,29 @@ export function Dashboard() {
           <h1 className="text-3xl font-bold tracking-tight text-foreground">Dashboard</h1>
           <p className="text-muted-foreground mt-1 text-sm">Manage your projects and collaborate with your team.</p>
         </div>
-        <Button 
-          onClick={() => setIsCreateModalOpen(true)} 
-          className="gap-2 bg-linear-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary shadow-md hover:shadow-lg hover:shadow-primary/20 transition-all font-medium rounded-xl"
-        >
-          <Plus className="h-4 w-4" />
-          New Project
-        </Button>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center bg-muted/50 p-1 rounded-lg border border-border/50">
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`p-2 rounded-md transition-all ${viewMode === 'grid' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+            >
+              <LayoutGrid className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => setViewMode('list')}
+              className={`p-2 rounded-md transition-all ${viewMode === 'list' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+            >
+              <List className="h-4 w-4" />
+            </button>
+          </div>
+          <Button 
+            onClick={() => setIsCreateModalOpen(true)} 
+            className="gap-2 bg-linear-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary shadow-md hover:shadow-lg hover:shadow-primary/20 transition-all font-medium rounded-xl"
+          >
+            <Plus className="h-4 w-4" />
+            New Project
+          </Button>
+        </div>
       </div>
 
       {isLoading ? (
@@ -54,13 +79,40 @@ export function Dashboard() {
            <p className="text-muted-foreground mb-4">You have no projects yet.</p>
            <Button variant="outline" onClick={() => setIsCreateModalOpen(true)}>Create your first project</Button>
         </div>
-      ) : (
+      ) : viewMode === 'grid' ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {projects.map((project) => (
             <div key={project.id} onClick={() => setSelectedProject(project)}>
               <ProjectCard project={project} />
             </div>
           ))}
+        </div>
+      ) : (
+        <div className="rounded-xl border border-border/50 bg-card overflow-hidden">
+          <Table>
+            <TableHeader className="bg-muted/30">
+              <TableRow>
+                <TableHead>Project Name</TableHead>
+                <TableHead>Description</TableHead>
+                <TableHead>Tasks</TableHead>
+                <TableHead>Members</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {projects.map((project) => (
+                <TableRow 
+                  key={project.id} 
+                  onClick={() => setSelectedProject(project)} 
+                  className="cursor-pointer hover:bg-muted/50 transition-colors"
+                >
+                  <TableCell className="font-medium text-foreground">{project.title}</TableCell>
+                  <TableCell className="text-muted-foreground w-1/3 truncate max-w-[200px]">{project.description}</TableCell>
+                  <TableCell>{project.tasks_count || 0}</TableCell>
+                  <TableCell>{project.collaborators.length + 1}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </div>
       )}
 
