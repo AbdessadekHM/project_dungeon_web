@@ -9,6 +9,7 @@ import { CreateTeamModal } from '../components/CreateTeamModal';
 import { EditTeamModal } from '../components/EditTeamModal';
 import { TeamDetailsModal } from '../components/TeamDetailsModal';
 import { TeamTable } from '../components/TeamTable';
+import { adminApi } from '@/features/admin/api';
 
 export function Teams() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -27,7 +28,7 @@ export function Teams() {
     try {
       const [teamsData, usersData, projectsData] = await Promise.all([
         teamApi.getTeams(),
-        teamApi.getUsers(),
+        adminApi.getUsers(),
         teamApi.getProjects()
       ]);
       setTeams(teamsData);

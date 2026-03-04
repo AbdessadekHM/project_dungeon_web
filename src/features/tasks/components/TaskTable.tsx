@@ -34,6 +34,8 @@ import { PriorityBadge } from './PriorityBadge';
 import { TypeBadge } from './TypeBadge';
 import type { Task } from '../types';
 import type { User } from '@/features/projects/types';
+import { useAuthStore } from '@/features/auth/stores/useAuthStore';
+import { useAppStore } from '@/stores/useAppStore';
 
 interface DataTableProps {
   tasks: Task[];
@@ -43,6 +45,8 @@ interface DataTableProps {
 }
 
 export function TaskTable({ tasks, onTaskUpdate, onTaskClick }: DataTableProps) {
+  const { user } = useAuthStore();
+  const { selectedProject } = useAppStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string[]>([]);
   const [priorityFilter, setPriorityFilter] = useState<string[]>([]);
@@ -223,20 +227,22 @@ export function TaskTable({ tasks, onTaskUpdate, onTaskClick }: DataTableProps) 
                     <PriorityBadge priority={task.priority} />
                   </TableCell>
                   <TableCell className="px-4">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-7 w-7 p-0 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
-                          <span className="sr-only">Open menu</span>
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="border-border">
-                        <DropdownMenuLabel className="text-[11px] uppercase tracking-wide text-muted-foreground">Actions</DropdownMenuLabel>
-                        <DropdownMenuItem onClick={() => onTaskClick?.(task)} className="text-[13px] cursor-pointer">Edit Task</DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-destructive text-[13px] cursor-pointer">Delete Task</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    {(user?.role === 'admin' || user?.id === selectedProject?.owner) && (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" className="h-7 w-7 p-0 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                            <span className="sr-only">Open menu</span>
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="border-border">
+                          <DropdownMenuLabel className="text-[11px] uppercase tracking-wide text-muted-foreground">Actions</DropdownMenuLabel>
+                          <DropdownMenuItem onClick={() => onTaskClick?.(task)} className="text-[13px] cursor-pointer">Edit Task</DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem className="text-destructive text-[13px] cursor-pointer">Delete Task</DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    )}
                   </TableCell>
                 </TableRow>
               ))

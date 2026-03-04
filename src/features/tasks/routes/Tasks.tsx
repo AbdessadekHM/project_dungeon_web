@@ -11,12 +11,14 @@ import { useAppStore } from '@/stores/useAppStore';
 import { taskApi } from '../api';
 import { teamApi } from '@/features/teams/api';
 import { adminApi } from '@/features/admin/api';
+import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import type { Task } from '../types';
 import type { User } from '@/features/projects/types';
 
 export function Tasks() {
   const { projectId } = useParams();
   const { selectedProject } = useAppStore();
+  const { user } = useAuthStore();
   const [viewMode, setViewMode] = useState<'list' | 'kanban'>('kanban');
   const [tasks, setTasks] = useState<Task[]>([]);
   const [users, setUsers] = useState<User[]>([]);
@@ -103,18 +105,20 @@ export function Tasks() {
           </div>
 
           {/* Create Task CTA */}
-          <Button 
-            onClick={() => setIsCreateModalOpen(true)}
-            className={cn(
-              "h-8 rounded-md text-[13px] font-medium gap-1.5",
-              "bg-linear-to-br from-indigo-500 to-violet-600 text-white",
-              "hover:brightness-110 hover:shadow-[0_0_0_3px_var(--accent-glow)]",
-              "transition-all duration-150"
-            )}
-          >
-            <Plus className="h-3.5 w-3.5" />
-            Create Task
-          </Button>
+          {(user?.role === 'admin' || user?.id === selectedProject?.owner) && (
+            <Button 
+              onClick={() => setIsCreateModalOpen(true)}
+              className={cn(
+                "h-8 rounded-md text-[13px] font-medium gap-1.5",
+                "bg-linear-to-br from-indigo-500 to-violet-600 text-white",
+                "hover:brightness-110 hover:shadow-[0_0_0_3px_var(--accent-glow)]",
+                "transition-all duration-150"
+              )}
+            >
+              <Plus className="h-3.5 w-3.5" />
+              Create Task
+            </Button>
+          )}
         </div>
       </div>
 

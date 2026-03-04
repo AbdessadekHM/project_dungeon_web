@@ -34,6 +34,7 @@ import { teamApi } from '@/features/teams/api';
 import { adminApi } from '@/features/admin/api';
 import type { User, Project } from '@/features/projects/types';
 import type { Task } from '../types';
+import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 
 const taskSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -58,6 +59,7 @@ interface EditTaskModalProps {
 export function EditTaskModal({ open, onOpenChange, onSuccess, project, task }: EditTaskModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [assignees, setAssignees] = useState<User[]>([]);
+  const { user } = useAuthStore();
 
   const form = useForm<TaskFormValues>({
     resolver: zodResolver(taskSchema),
@@ -75,7 +77,7 @@ export function EditTaskModal({ open, onOpenChange, onSuccess, project, task }: 
   const fetchAssignees = useCallback(async () => {
     try {
       const [allUsers, allTeams] = await Promise.all([
-        adminApi.getUsers(), // Changed from teamApi.getUsers()
+        adminApi.getUsers(), 
         teamApi.getTeams()
       ]);
 
@@ -151,6 +153,8 @@ export function EditTaskModal({ open, onOpenChange, onSuccess, project, task }: 
             <FormField
               control={form.control}
               name="title"
+              disabled={user?.id !== project.owner}
+              // disabled={user?.id !== project.owner && user?.id !== task?.assignee}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-[13px]">Title</FormLabel>
@@ -165,6 +169,7 @@ export function EditTaskModal({ open, onOpenChange, onSuccess, project, task }: 
             <FormField
               control={form.control}
               name="description"
+              disabled={user?.id !== project.owner}
               render={({ field }) => (
                 <FormItem data-color-mode="dark">
                   <FormLabel className="text-[13px]">Description</FormLabel>
@@ -189,6 +194,7 @@ export function EditTaskModal({ open, onOpenChange, onSuccess, project, task }: 
               <FormField
                 control={form.control}
                 name="status"
+                disabled={user?.id !== project.owner && user?.id !== task?.assignee}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-[13px]">Status</FormLabel>
@@ -215,7 +221,7 @@ export function EditTaskModal({ open, onOpenChange, onSuccess, project, task }: 
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-[13px]">Priority</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select onValueChange={field.onChange} defaultValue={field.value} disabled={user?.id !== project.owner}>
                       <FormControl>
                         <SelectTrigger className="bg-secondary/30 border-border text-[13px]">
                           <SelectValue placeholder="Select priority" />
@@ -240,7 +246,7 @@ export function EditTaskModal({ open, onOpenChange, onSuccess, project, task }: 
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-[13px]">Type</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select onValueChange={field.onChange} defaultValue={field.value} disabled={user?.id !== project.owner}>
                       <FormControl>
                         <SelectTrigger className="bg-secondary/30 border-border text-[13px]">
                           <SelectValue placeholder="Select type" />
@@ -261,6 +267,7 @@ export function EditTaskModal({ open, onOpenChange, onSuccess, project, task }: 
               <FormField
                 control={form.control}
                 name="deadline"
+                disabled={user?.id !== project.owner}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-[13px]">Deadline</FormLabel>
@@ -271,7 +278,7 @@ export function EditTaskModal({ open, onOpenChange, onSuccess, project, task }: 
                         {...field} 
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage aria-disabled={user?.id !== project.owner} />
                   </FormItem>
                 )}
               />
@@ -282,7 +289,7 @@ export function EditTaskModal({ open, onOpenChange, onSuccess, project, task }: 
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-[13px]">Assignee</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={form.getValues().assignee}>
+                    <Select onValueChange={field.onChange} defaultValue={form.getValues().assignee} disabled={user?.id !== project.owner}>
                       <FormControl>
                         <SelectTrigger className="bg-secondary/30 border-border text-[13px]">
                           <SelectValue placeholder="Select assignee" />
