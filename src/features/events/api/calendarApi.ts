@@ -61,5 +61,22 @@ export const calendarApi = {
   getPotentialAttendees: async () => {
     const response = await apiClient.get('/account/users/');
     return response.data;
+  },
+
+  // Fetch Public Holidays
+  getPublicHolidays: async (year: number) => {
+    try {
+      const response = await fetch(
+        `https://date.nager.at/api/v3/PublicHolidays/${year}/MA`
+      );
+      if (!response.ok) return [];
+      const data = await response.json();
+      console.log("fetched data is ")
+      console.log(data)
+      return data || [];
+    } catch (error) {
+      console.error('Failed to fetch public holidays:', error);
+      return [];
+    }
   }
 };

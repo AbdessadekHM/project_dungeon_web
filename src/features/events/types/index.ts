@@ -17,12 +17,13 @@ export interface CalendarEvent {
   description: string;
   start: string; // ISO string
   end: string;   // ISO string
-  event_type: 'meeting' | 'issues' | 'other';
+  event_type: 'meeting' | 'issues' | 'other' | 'holiday';
   google_event_id?: string;
   meet_link?: string;
   attendees?: GoogleAttendee[] | Attendee[];
-  source: 'local' | 'google';
+  source: 'local' | 'google' | 'holiday';
   project?: number | Project;
+  allDay?: boolean;
 }
 
 export interface CreateEventPayload {

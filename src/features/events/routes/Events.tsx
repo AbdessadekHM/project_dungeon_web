@@ -24,10 +24,28 @@ export function Events() {
     
     setLoading(true);
     try {
-      // Fetch local events (from our database)
-      const localEvents = await calendarApi.getEvents(selectedProject.id);
+      // Fetch local events (from our database) and public holidays concurrently
+      const [localEvents, holidaysData] = await Promise.all([
+        calendarApi.getEvents(selectedProject.id),
+        calendarApi.getPublicHolidays(new Date().getFullYear()) // Pass correct year dynamically
+      ]);
       
       let allEvents = [...localEvents];
+
+      // Format holidays to match CalendarEvent
+      const mappedHolidays: CalendarEvent[] = holidaysData.map((h: { date: string; name: string; countryCode: string; localName: string }, index: number) => ({
+        id: `holiday-${h.date}-${index}`,
+        title: h.name,
+        description: `Public Holiday: ${h.localName} in ${h.countryCode}`,
+        start: new Date(`${h.date}T00:00:00`).toISOString(),
+        end: new Date(`${h.date}T23:59:59`).toISOString(),
+        event_type: 'holiday',
+        source: 'holiday',
+        allDay: true
+      }));
+
+      // Add holidays to timeline
+      allEvents = [...allEvents, ...mappedHolidays];
 
       // If Google is connected, also fetch from Google Calendar
       if (isGoogleConnected) {
@@ -36,10 +54,10 @@ export function Events() {
             
             // Deduplicate: filter out google events that already exist locally
             const localGoogleIds = new Set(
-              localEvents.map(e => e.google_event_id).filter(id => id)
+              localEvents.map((e: CalendarEvent) => e.google_event_id).filter((id: string | undefined) => id)
             );
             const uniqueGoogleEvents = googleEvents.filter(
-              e => !localGoogleIds.has(e.id as string)
+              (e: CalendarEvent) => !localGoogleIds.has(e.id as string)
             );
             
             allEvents = [...allEvents, ...uniqueGoogleEvents];

@@ -17,6 +17,9 @@ export const EventCalendar: React.FC<EventCalendarProps> = ({
   onSelectSlot, 
   onSelectEvent 
 }) => {
+  const [view, setView] = React.useState<any>(Views.MONTH);
+  const [date, setDate] = React.useState<Date>(new Date());
+
   // Convert ISO dates to Date objects for react-big-calendar
   const formattedEvents = events.map(event => ({
     ...event,
@@ -34,11 +37,14 @@ export const EventCalendar: React.FC<EventCalendarProps> = ({
         startAccessor="start"
         endAccessor="end"
         style={{ height: '100%' }}
-        selectable
         onSelectSlot={onSelectSlot}
         onSelectEvent={(e) => onSelectEvent?.(e as any)}
-        defaultView={Views.MONTH}
+        view={view}
+        onView={setView}
+        date={date}
+        onNavigate={setDate}
         views={[Views.MONTH, Views.WEEK, Views.DAY, Views.AGENDA]}
+        allDayAccessor="allDay"
         eventPropGetter={(event: any) => ({
             className: event.className
         })}
