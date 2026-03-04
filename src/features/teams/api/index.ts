@@ -26,9 +26,13 @@ export const teamApi = {
     await apiClient.delete(`/management/teams/${id}/`);
   },
 
-  // Helpers to get expanded data since Django sends IDs
   getUsers: async (): Promise<User[]> => {
     const response = await apiClient.get('/account/users/');
+    return response.data;
+  },
+
+  createUser: async (data: Record<string, unknown>): Promise<User> => {
+    const response = await apiClient.post('/account/register/', data);
     return response.data;
   },
 

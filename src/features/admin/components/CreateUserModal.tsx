@@ -21,7 +21,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
-import { teamApi } from '@/features/teams/api';
+import { adminApi } from '@/features/admin/api';
 
 const registerSchema = z.object({
   username: z.string().min(3, 'Username must be at least 3 characters'),
@@ -56,7 +56,7 @@ export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserMod
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
     try {
-      await teamApi.createUser(data);
+      await adminApi.createUser(data);
       form.reset();
       onSuccess();
       onOpenChange(false);

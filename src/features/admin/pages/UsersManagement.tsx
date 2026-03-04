@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Shield, Plus } from 'lucide-react';
-import { teamApi } from '@/features/teams/api';
+import { adminApi } from '@/features/admin/api';
 import type { User } from '@/features/projects/types';
 import { UserTable } from '../components/UserTable';
 import { Button } from '@/components/ui/button';
@@ -15,7 +15,7 @@ export function UsersManagement() {
   const fetchUsers = async () => {
     setIsLoading(true);
     try {
-      const usersData = await teamApi.getUsers();
+      const usersData = await adminApi.getUsers();
       usersData.sort((a, b) => a.username.localeCompare(b.username));
       setUsers(usersData);
     } catch (error) {
