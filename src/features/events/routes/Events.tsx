@@ -1,46 +1,136 @@
-import { Plus, CalendarDays } from 'lucide-react';
+import { useEffect, useState, useCallback } from 'react';
+import { Plus, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import { useAppStore } from '@/stores/useAppStore';
+import { EventCalendar } from '../components/EventCalendar';
+import { GoogleCalendarConnect } from '../components/GoogleCalendarConnect';
+import { CreateEventDialog } from '../components/CreateEventDialog';
+import { calendarApi } from '../api/calendarApi';
+import type { CalendarEvent } from '../types';
 
 export function Events() {
   const { user } = useAuthStore();
   const { selectedProject } = useAppStore();
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isGoogleConnected, setIsGoogleConnected] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedSlot, setSelectedSlot] = useState<{ start: Date; end: Date } | null>(null);
+
+  const fetchEvents = useCallback(async () => {
+    if (!selectedProject?.id) return;
+    
+    setLoading(true);
+    try {
+      // Fetch local events (from our database)
+      const localEvents = await calendarApi.getEvents(selectedProject.id);
+      
+      let allEvents = [...localEvents];
+
+      // If Google is connected, also fetch from Google Calendar
+      if (isGoogleConnected) {
+        try {
+            const googleEvents = await calendarApi.syncGoogleEvents();
+            
+            // Deduplicate: filter out google events that already exist locally
+            const localGoogleIds = new Set(
+              localEvents.map(e => e.google_event_id).filter(id => id)
+            );
+            const uniqueGoogleEvents = googleEvents.filter(
+              e => !localGoogleIds.has(e.id as string)
+            );
+            
+            allEvents = [...allEvents, ...uniqueGoogleEvents];
+        } catch (err) {
+            console.error('Failed to sync Google events:', err);
+        }
+      }
+
+      setEvents(allEvents);
+    } catch (error) {
+      console.error('Failed to fetch events:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedProject?.id, isGoogleConnected]);
+
+  useEffect(() => {
+    fetchEvents();
+  }, [fetchEvents]);
+
+  const handleSelectSlot = (slotInfo: { start: Date; end: Date }) => {
+    if (user?.role === 'admin' || user?.id === selectedProject?.owner) {
+      setSelectedSlot(slotInfo);
+      setIsDialogOpen(true);
+    }
+  };
+
+  const handleSelectEvent = (event: CalendarEvent) => {
+    console.log('Event clicked:', event);
+    if (event.meet_link) {
+        window.open(event.meet_link, '_blank');
+    }
+  };
+
+  if (!selectedProject) {
+    return (
+      <div className="p-8 text-center bg-card rounded-2xl border border-dashed border-border mt-8">
+        <p className="text-muted-foreground">Please select a project to view events.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">Events</h1>
-          <p className="text-muted-foreground mt-1 text-sm">Manage project events here.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">Events & Calendar</h1>
+          <p className="text-muted-foreground mt-1 text-sm">Sync your project with Google Calendar and schedule meetings.</p>
         </div>
         
         {(user?.role === 'admin' || user?.id === selectedProject?.owner) && (
           <Button 
+            onClick={() => {
+                setSelectedSlot({ start: new Date(), end: new Date(Date.now() + 3600000) });
+                setIsDialogOpen(true);
+            }}
             className={cn(
-              "h-8 rounded-lg text-[13px] font-medium gap-1.5 px-4",
-              "bg-linear-to-br from-indigo-500 to-violet-600 text-white",
-              "hover:brightness-110 hover:shadow-glow-indigo",
-              "transition-all duration-200"
+              "h-10 rounded-xl text-[14px] font-bold gap-2 px-6",
+              "bg-primary text-primary-foreground shadow-lg shadow-primary/20",
+              "hover:brightness-110 hover:scale-105 transition-all duration-200"
             )}
           >
-            <Plus className="h-3.5 w-3.5" />
+            <Plus className="h-4 w-4" />
             Create Event
           </Button>
         )}
       </div>
 
-      {/* Empty state */}
-      <div className="text-center py-20 px-8 border border-dashed border-border rounded-xl bg-card/50">
-        <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-5">
-          <CalendarDays className="h-8 w-8 text-primary" />
-        </div>
-        <h3 className="text-lg font-semibold text-foreground mb-2">No events yet</h3>
-        <p className="text-muted-foreground text-sm max-w-sm mx-auto">
-          Create your first event to get started tracking milestones and deadlines.
-        </p>
+      <GoogleCalendarConnect onStatusChange={setIsGoogleConnected} />
+
+      <div className="bg-card rounded-2xl border border-border p-2 shadow-xl shadow-foreground/5 min-h-[700px] relative">
+        {loading && (
+            <div className="absolute inset-0 bg-background/50 backdrop-blur-sm z-50 flex items-center justify-center rounded-2xl">
+                <Loader2 className="h-10 w-10 animate-spin text-primary" />
+            </div>
+        )}
+        
+        <EventCalendar 
+            events={events} 
+            onSelectSlot={handleSelectSlot}
+            onSelectEvent={handleSelectEvent}
+        />
       </div>
+
+      <CreateEventDialog 
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        selectedSlot={selectedSlot}
+        projectId={selectedProject.id}
+        onEventCreated={fetchEvents}
+      />
     </div>
   );
 }

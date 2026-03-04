@@ -12,8 +12,13 @@ import { Repositories } from '../features/repositories/routes/Repositories';
 import { AdminLayout } from '../features/admin/layouts/AdminLayout';
 import { AdminDashboard } from '../features/admin/pages/AdminDashboard';
 import { UsersManagement } from '../features/admin/pages/UsersManagement';
+import { GoogleCallback } from '../features/events/components/GoogleCallback';
 
 const router = createBrowserRouter([
+  {
+    path: 'google/callback',
+    element: <GoogleCallback />,
+  },
   {
     path: '/*',
     element: <AuthRoutes />,
