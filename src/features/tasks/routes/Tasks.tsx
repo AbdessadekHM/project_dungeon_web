@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { Plus, LayoutGrid, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -10,6 +10,7 @@ import { EditTaskModal } from '../components/EditTaskModal';
 import { useAppStore } from '@/stores/useAppStore';
 import { taskApi } from '../api';
 import { teamApi } from '@/features/teams/api';
+import { adminApi } from '@/features/admin/api';
 import type { Task } from '../types';
 import type { User } from '@/features/projects/types';
 
@@ -23,30 +24,31 @@ export function Tasks() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
 
-  useEffect(() => {
-    if (projectId || selectedProject?.id) {
-      fetchData();
-    }
-  }, [projectId, selectedProject?.id]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
       const pId = projectId || selectedProject?.id;
       if (!pId) return;
 
-      const [tasksData, usersData] = await Promise.all([
+      const [tasksRes, , usersRes] = await Promise.all([
         taskApi.getTasks(pId),
-        teamApi.getUsers()
+        teamApi.getTeams(), 
+        adminApi.getUsers()
       ]);
-      setTasks(tasksData);
-      setUsers(usersData);
+      setTasks(tasksRes); 
+      setUsers(usersRes); 
     } catch (error) {
       console.error('Failed to fetch tasks', error);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [projectId, selectedProject?.id]);
+
+  useEffect(() => {
+    if (projectId || selectedProject?.id) {
+      fetchData();
+    }
+  }, [projectId, selectedProject?.id, fetchData]);
 
   const handleTaskUpdate = async (taskId: number, newStatus: Task['status']) => {
     setTasks(prevTasks => prevTasks.map(t => 

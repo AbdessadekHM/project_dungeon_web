@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -31,6 +31,7 @@ import MDEditor from '@uiw/react-md-editor';
 import { Loader2 } from 'lucide-react';
 import { taskApi } from '../api';
 import { teamApi } from '@/features/teams/api';
+import { adminApi } from '@/features/admin/api';
 import type { User, Project } from '@/features/projects/types';
 import type { Task } from '../types';
 
@@ -71,25 +72,10 @@ export function EditTaskModal({ open, onOpenChange, onSuccess, project, task }: 
     },
   });
 
-  useEffect(() => {
-    if (open && task) {
-      form.reset({
-        title: task.title,
-        description: task.description,
-        status: task.status,
-        priority: task.priority,
-        task_type: task.task_type || 'feature',
-        deadline: task.deadline,
-        assignee: task.assignee ? task.assignee.toString() : 'unassigned'
-      });
-      fetchAssignees();
-    }
-  }, [open, task, project.id]);
-
-  const fetchAssignees = async () => {
+  const fetchAssignees = useCallback(async () => {
     try {
       const [allUsers, allTeams] = await Promise.all([
-        teamApi.getUsers(),
+        adminApi.getUsers(), // Changed from teamApi.getUsers()
         teamApi.getTeams()
       ]);
 
@@ -108,7 +94,22 @@ export function EditTaskModal({ open, onOpenChange, onSuccess, project, task }: 
     } catch (error) {
       console.error('Failed to fetch assignees:', error);
     }
-  };
+  }, [project.collaborators, project.id, project.owner]);
+
+  useEffect(() => {
+    if (open && task) {
+      form.reset({
+        title: task.title,
+        description: task.description,
+        status: task.status,
+        priority: task.priority,
+        task_type: task.task_type || 'feature',
+        deadline: task.deadline,
+        assignee: task.assignee ? task.assignee.toString() : 'unassigned'
+      });
+      fetchAssignees();
+    }
+  }, [open, task, form, fetchAssignees]);
 
   const onSubmit = async (data: TaskFormValues) => {
     if (!task) return;

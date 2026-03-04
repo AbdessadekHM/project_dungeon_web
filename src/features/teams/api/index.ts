@@ -1,5 +1,5 @@
 import { apiClient } from '@/lib/axios';
-import type { Team, User, Project } from '../types';
+import type { Team, Project } from '../types';
 
 export const teamApi = {
   getTeams: async (): Promise<Team[]> => {
@@ -24,16 +24,6 @@ export const teamApi = {
 
   deleteTeam: async (id: number): Promise<void> => {
     await apiClient.delete(`/management/teams/${id}/`);
-  },
-
-  getUsers: async (): Promise<User[]> => {
-    const response = await apiClient.get('/account/users/');
-    return response.data;
-  },
-
-  createUser: async (data: Record<string, unknown>): Promise<User> => {
-    const response = await apiClient.post('/account/register/', data);
-    return response.data;
   },
 
   getProjects: async (): Promise<Project[]> => {

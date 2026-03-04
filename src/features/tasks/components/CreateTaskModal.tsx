@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -31,6 +31,7 @@ import MDEditor from '@uiw/react-md-editor';
 import { Loader2 } from 'lucide-react';
 import { taskApi } from '../api';
 import { teamApi } from '@/features/teams/api';
+import { adminApi } from '@/features/admin/api';
 import type { User, Project } from '@/features/projects/types';
 
 const taskSchema = z.object({
@@ -69,17 +70,10 @@ export function CreateTaskModal({ open, onOpenChange, onSuccess, project }: Crea
     },
   });
 
-  useEffect(() => {
-    if (open) {
-      form.reset();
-      fetchAssignees();
-    }
-  }, [open, project.id]);
-
-  const fetchAssignees = async () => {
+  const fetchAssignees = useCallback(async () => {
     try {
       const [allUsers, allTeams] = await Promise.all([
-        teamApi.getUsers(),
+        adminApi.getUsers(), // Changed from teamApi.getUsers() to adminApi.getUsers()
         teamApi.getTeams()
       ]);
 
@@ -98,7 +92,14 @@ export function CreateTaskModal({ open, onOpenChange, onSuccess, project }: Crea
     } catch (error) {
       console.error('Failed to fetch assignees:', error);
     }
-  };
+  }, [project.collaborators, project.id, project.owner]);
+
+  useEffect(() => {
+    if (open) {
+      form.reset();
+      fetchAssignees();
+    }
+  }, [open, form, fetchAssignees]);
 
   const onSubmit = async (data: TaskFormValues) => {
     setIsSubmitting(true);
