@@ -8,7 +8,12 @@ import { Tasks } from '../features/tasks/routes/Tasks';
 import { Events } from '../features/events/routes/Events';
 import { Repositories } from '../features/repositories/routes/Repositories';
 
-export const router = createBrowserRouter([
+// Admin imports
+import { AdminLayout } from '../features/admin/layouts/AdminLayout';
+import { AdminDashboard } from '../features/admin/pages/AdminDashboard';
+import { UsersManagement } from '../features/admin/pages/UsersManagement';
+
+const router = createBrowserRouter([
   {
     path: '/*',
     element: <AuthRoutes />,
@@ -28,6 +33,32 @@ export const router = createBrowserRouter([
       {
         path: 'teams',
         element: <Teams />
+      }
+    ]
+  },
+  {
+    path: '/admin',
+    element: <AdminLayout />,
+    children: [
+      {
+        index: true,
+        element: <Navigate to="dashboard" replace />
+      },
+      {
+        path: 'dashboard',
+        element: <AdminDashboard />
+      },
+      {
+        path: 'projects',
+        element: <Dashboard />
+      },
+      {
+        path: 'teams',
+        element: <Teams />
+      },
+      {
+        path: 'users',
+        element: <UsersManagement />
       }
     ]
   },
