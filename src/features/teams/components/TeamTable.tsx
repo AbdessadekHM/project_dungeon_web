@@ -39,7 +39,7 @@ export function TeamTable({ teams, onTeamSelect }: TeamTableProps) {
               placeholder="Filter teams..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-8 text-[13px] pl-8 bg-card border-border focus-visible:ring-1 focus-visible:ring-primary"
+              className="h-8 text-[13px] pl-8 bg-card border-border focus-visible:ring-1 focus-visible:ring-primary rounded-lg"
             />
           </div>
           {searchQuery && (
@@ -55,7 +55,7 @@ export function TeamTable({ teams, onTeamSelect }: TeamTableProps) {
       </div>
 
       {/* Table Content */}
-      <div className="rounded-lg border border-border bg-card overflow-hidden">
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow className="border-border bg-secondary/30 hover:bg-secondary/30">
@@ -77,14 +77,16 @@ export function TeamTable({ teams, onTeamSelect }: TeamTableProps) {
                 <TableRow 
                   key={team.id} 
                   onClick={() => onTeamSelect(team)}
-                  className="cursor-pointer border-border hover:bg-secondary/50 transition-colors duration-150 group relative"
+                  className="cursor-pointer border-border hover:bg-secondary/30 transition-colors duration-200 group relative"
                 >
                   {/* Left accent bar */}
-                  <td className="absolute left-0 top-0 h-full w-0.5 bg-primary opacity-0 group-hover:opacity-100 transition-opacity duration-150" />
+                  <td className="absolute left-0 top-0 h-full w-0.5 bg-primary opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
                   <TableCell className="px-4">
-                    <div className="flex items-center gap-2">
-                      <Users className="w-4 h-4 text-primary" />
-                      <span className="text-[13px] font-medium">{team.name}</span>
+                    <div className="flex items-center gap-2.5">
+                      <div className="h-7 w-7 rounded-md bg-accent-subtle flex items-center justify-center shrink-0">
+                        <Users className="w-3.5 h-3.5 text-primary" />
+                      </div>
+                      <span className="text-[13px] font-medium group-hover:text-primary transition-colors duration-200">{team.name}</span>
                     </div>
                   </TableCell>
                   <TableCell className="text-muted-foreground text-[12px] font-mono px-4">

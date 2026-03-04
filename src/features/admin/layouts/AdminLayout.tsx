@@ -36,14 +36,14 @@ export function AdminLayout() {
   const SidebarContent = () => (
     <>
       {/* Logo Row */}
-      <div className="h-14 flex items-center px-5 border-b border-border gap-3 bg-red-950/20">
+      <div className="h-14 flex items-center px-5 border-b border-sidebar-border gap-3 bg-red-950/20">
         <img src={logo} alt="Project Dungeon" className="h-7 w-7" />
-        <span className="font-semibold text-[14px] tracking-tight text-red-500">Admin Portal</span>
+        <span className="font-semibold text-[14px] tracking-tight text-red-400">Admin Portal</span>
       </div>
       
       {/* Nav Items */}
-      <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-0.5">
-        <div className="px-3 pb-2 text-[10px] uppercase font-bold text-muted-foreground tracking-wider">
+      <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+        <div className="px-3 pb-2.5 pt-1 text-[10px] uppercase font-bold text-muted-foreground/60 tracking-[0.08em]">
           Management
         </div>
         {navItems.map((item) => {
@@ -53,32 +53,50 @@ export function AdminLayout() {
             <Link 
               key={item.path}
               to={item.path} 
-              className={`flex items-center gap-3 px-3 py-1.5 text-[13px] font-medium rounded-md transition-all duration-150 relative ${
+              className={`flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium rounded-lg transition-all duration-200 relative ${
                 isActive 
-                  ? 'bg-red-500/10 text-red-500' 
-                  : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
+                  ? 'bg-red-500/10 text-red-400 shadow-[inset_0_0_0_1px_rgba(239,68,68,0.15)]' 
+                  : 'text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground'
               }`}
             >
-              <Icon className={`h-4 w-4 ${isActive ? 'text-red-500' : ''}`} />
+              <Icon className={`h-4 w-4 shrink-0 ${isActive ? 'text-red-400' : ''}`} />
               {item.label}
             </Link>
           );
         })}
       </nav>
+
+      {/* User avatar at bottom */}
+      <div className="p-3 border-t border-sidebar-border">
+        <div className="flex items-center gap-3 px-2 py-1.5 rounded-lg">
+          <div className="relative">
+            <Avatar className="h-8 w-8 border-2 border-red-500/30">
+              <AvatarFallback className="bg-red-500/15 text-red-400 font-semibold text-[11px]">
+                {user?.username ? user.username.substring(0, 2).toUpperCase() : 'AD'}
+              </AvatarFallback>
+            </Avatar>
+            <div className="presence-dot" style={{ background: '#ef4444' }} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-[13px] font-medium text-sidebar-foreground truncate">{user?.username || 'Admin'}</p>
+            <p className="text-[11px] text-red-400/70 truncate">Administrator</p>
+          </div>
+        </div>
+      </div>
     </>
   );
 
   return (
     <div className="flex h-screen bg-background text-foreground overflow-hidden">
       {/* Sidebar */}
-      <aside className="hidden md:flex w-[220px] border-r border-border bg-card shrink-0 flex-col">
+      <aside className="hidden md:flex w-[220px] border-r border-sidebar-border bg-sidebar shrink-0 flex-col">
         <SidebarContent />
       </aside>
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top Bar */}
-        <header className="h-14 border-b border-red-500/20 bg-card flex items-center justify-between px-4 sm:px-6 shrink-0 z-10 sticky top-0">
+        <header className="h-14 border-b border-red-500/15 bg-card/80 backdrop-blur-sm flex items-center justify-between px-4 sm:px-6 shrink-0 z-10 sticky top-0">
           <div className="flex items-center gap-2 sm:gap-3">
             <Sheet>
               <SheetTrigger asChild>
@@ -87,14 +105,14 @@ export function AdminLayout() {
                   <span className="sr-only">Toggle Admin Menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-[220px] p-0 shrink-0 flex flex-col bg-card border-r-border">
+              <SheetContent side="left" className="w-[220px] p-0 shrink-0 flex flex-col bg-sidebar border-r-sidebar-border">
                 <SheetTitle className="sr-only">Admin Navigation</SheetTitle>
                 <SheetDescription className="sr-only">Access admin navigation</SheetDescription>
                 <SidebarContent />
               </SheetContent>
             </Sheet>
             
-            <Badge variant="outline" className="hidden sm:flex text-red-500 border-red-500/50 bg-red-500/10">
+            <Badge variant="outline" className="hidden sm:flex text-red-400 border-red-500/30 bg-red-500/10 text-[11px]">
               Admin Mode
             </Badge>
           </div>
@@ -103,8 +121,8 @@ export function AdminLayout() {
             <ModeToggle />
             <DropdownMenu>
               <DropdownMenuTrigger className="outline-none">
-                <Avatar className="h-8 w-8 border-2 border-red-500/50 hover:border-red-500 transition-all duration-150 cursor-pointer">
-                  <AvatarFallback className="bg-red-500/10 text-red-500 font-semibold text-[11px]">
+                <Avatar className="h-8 w-8 border-2 border-red-500/30 hover:border-red-500/60 transition-all duration-200 cursor-pointer">
+                  <AvatarFallback className="bg-red-500/10 text-red-400 font-semibold text-[11px]">
                     {user?.username ? user.username.substring(0, 2).toUpperCase() : 'AD'}
                   </AvatarFallback>
                 </Avatar>
@@ -112,7 +130,7 @@ export function AdminLayout() {
               <DropdownMenuContent align="end" className="w-56 mt-2 border-border shadow-lg">
                 <DropdownMenuLabel>
                   <div className="flex flex-col space-y-1">
-                    <p className="text-[13px] font-medium leading-none text-red-500">{user?.username || 'Admin'}</p>
+                    <p className="text-[13px] font-medium leading-none text-red-400">{user?.username || 'Admin'}</p>
                     <p className="text-[11px] leading-none text-muted-foreground">{user?.email || 'admin@example.com'}</p>
                   </div>
                 </DropdownMenuLabel>

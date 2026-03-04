@@ -32,29 +32,29 @@ export function TaskKanbanCard({ task, users, index, onClick }: TaskKanbanCardPr
           ref={provided.innerRef}
           {...provided.draggableProps}
           onClick={onClick}
-          className={`cursor-pointer border-border hover:border-primary/30 transition-all duration-150 group ${snapshot.isDragging ? 'shadow-lg border-primary/50 rotate-1' : 'shadow-sm'}`}
+          className={`cursor-pointer card-hover-glow rounded-xl group ${snapshot.isDragging ? 'shadow-lg border-primary/50! rotate-1' : ''}`}
         >
-          <CardContent className="p-3 space-y-3">
+          <CardContent className="p-3 space-y-2.5">
             <div className="flex justify-between items-start gap-2">
               <div className="flex items-center gap-2">
                 <div 
                   {...provided.dragHandleProps} 
-                  className="text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing p-0.5 -ml-0.5"
+                  className="text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing p-0.5 -ml-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                 >
                   <GripVertical className="h-3.5 w-3.5" />
                 </div>
                 <TypeBadge type={task.task_type || 'other'} />
               </div>
-              <button className="text-muted-foreground hover:text-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+              <button className="text-muted-foreground hover:text-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 <MoreVertical className="h-3.5 w-3.5" />
               </button>
             </div>
 
             <div>
-              <h4 className="text-[13px] font-medium leading-tight text-foreground group-hover:text-primary transition-colors duration-150">
+              <h4 className="text-[13px] font-semibold leading-tight text-foreground group-hover:text-primary transition-colors duration-200">
                 {task.title}
               </h4>
-              <p className="text-[12px] text-muted-foreground line-clamp-2 mt-1">
+              <p className="text-[12px] text-muted-foreground/80 line-clamp-2 mt-1">
                 {task.description}
               </p>
             </div>
@@ -69,11 +69,14 @@ export function TaskKanbanCard({ task, users, index, onClick }: TaskKanbanCardPr
               </div>
               
               {task.assignee ? (
-                <Avatar className="h-6 w-6 border-2 border-card shadow-sm" title={assignee.username}>
-                  <AvatarFallback className="text-[10px] bg-primary/10 text-primary">
-                    {assignee.initial}
-                  </AvatarFallback>
-                </Avatar>
+                <div className="relative">
+                  <Avatar className="h-6 w-6 border-2 border-card shadow-sm" title={assignee.username}>
+                    <AvatarFallback className="text-[10px] bg-primary/10 text-primary">
+                      {assignee.initial}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="presence-dot" style={{ width: '6px', height: '6px', borderWidth: '1.5px' }} />
+                </div>
               ) : (
                 <div 
                   className="h-6 w-6 rounded-full bg-secondary border-2 border-card flex items-center justify-center shadow-sm"

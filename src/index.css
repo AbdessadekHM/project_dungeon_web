@@ -22,6 +22,8 @@
   --shadow-ambient: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.03);
   --shadow-ambient-hover: 0 10px 30px -4px rgba(0, 0, 0, 0.1), 0 4px 12px -2px rgba(0, 0, 0, 0.05);
   --shadow-card: var(--shadow-ambient);
+  --shadow-card-hover: var(--shadow-ambient-hover);
+  --shadow-glow-indigo: 0 0 0 1px rgba(99,102,241,0.3), 0 4px 20px -4px rgba(99,102,241,0.15);
 }
 
 @theme inline {
@@ -136,45 +138,49 @@
   --badge-other-color: #6B7280;
   --badge-other-bg: rgba(107,114,128,0.08);
   --badge-other-border: rgba(107,114,128,0.18);
+
+  /* --- Card Hover --- */
+  --card-border: #E4E4E8;
+  --card-border-hover: rgba(94, 106, 210, 0.3);
 }
 
 .dark {
-  /* Modern Project Management Dark Theme */
-  --background: #0F0F10;
-  --foreground: #F0F0F2;
-  --card: #161618;
-  --card-foreground: #F0F0F2;
-  --popover: #161618;
-  --popover-foreground: #F0F0F2;
+  /* Modern Project Management Dark Theme — Linear-inspired */
+  --background: #0A0A0F;
+  --foreground: #E8E8ED;
+  --card: #13131E;
+  --card-foreground: #E8E8ED;
+  --popover: #13131E;
+  --popover-foreground: #E8E8ED;
   --primary: #818CF8;
   --primary-foreground: #ffffff;
-  --secondary: #1C1C1F;
-  --secondary-foreground: #F0F0F2;
-  --muted: #1C1C1F;
-  --muted-foreground: #8A8A9A;
-  --accent: #1C1C1F;
-  --accent-foreground: #F0F0F2;
+  --secondary: #1A1A28;
+  --secondary-foreground: #E8E8ED;
+  --muted: #1A1A28;
+  --muted-foreground: #8A8AA0;
+  --accent: #1A1A28;
+  --accent-foreground: #E8E8ED;
   --destructive: #7f1d1d;
   --destructive-foreground: #fafafa;
-  --border: #2A2A2F;
-  --input: #2A2A2F;
+  --border: rgba(255,255,255,0.06);
+  --input: rgba(255,255,255,0.08);
   --ring: #818CF8;
   --chart-1: #818CF8;
   --chart-2: #2dd4bf;
   --chart-3: #fbbf24;
   --chart-4: #f472b6;
   --chart-5: #a78bfa;
-  --sidebar: #161618;
-  --sidebar-foreground: #F0F0F2;
+  --sidebar: #0F0F17;
+  --sidebar-foreground: #E8E8ED;
   --sidebar-primary: #818CF8;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #1C1C1F;
-  --sidebar-accent-foreground: #F0F0F2;
-  --sidebar-border: #2A2A2F;
+  --sidebar-accent: #1A1A28;
+  --sidebar-accent-foreground: #E8E8ED;
+  --sidebar-border: rgba(255,255,255,0.06);
   --sidebar-ring: #818CF8;
 
   /* --- Accent Glow --- */
-  --accent-glow: rgba(129, 140, 248, 0.15);
+  --accent-glow: rgba(129, 140, 248, 0.18);
   --accent-subtle: rgba(129, 140, 248, 0.10);
 
   /* --- Status Tokens --- */
@@ -203,6 +209,10 @@
   --badge-other-color: #9CA3AF;
   --badge-other-bg: rgba(156,163,175,0.08);
   --badge-other-border: rgba(156,163,175,0.15);
+
+  /* --- Card Hover --- */
+  --card-border: rgba(255,255,255,0.06);
+  --card-border-hover: rgba(255,255,255,0.12);
 }
 
 @layer base {
@@ -213,3 +223,74 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Dot grid background for dark mode */
+.dark body {
+  background-image: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Global transition default */
+@layer base {
+  button, a, [role="button"], input, select, textarea {
+    transition: all 200ms ease;
+  }
+}
+
+/* Card hover glow effect utility */
+.card-hover-glow {
+  transition: all 200ms ease;
+  border: 1px solid var(--card-border);
+}
+.card-hover-glow:hover {
+  border-color: var(--card-border-hover);
+  box-shadow: 0 0 0 1px rgba(99,102,241,0.3), 0 8px 25px -5px rgba(0,0,0,0.3);
+  transform: translateY(-2px);
+}
+
+/* Active nav pill glow */
+.nav-active-pill {
+  background: var(--accent-subtle);
+  box-shadow: inset 0 0 0 1px var(--accent-glow);
+}
+
+/* Progress bar animation */
+@keyframes progress-fill {
+  from { width: 0; }
+}
+.progress-bar-animated {
+  animation: progress-fill 800ms ease-out forwards;
+}
+
+/* Smooth scrollbar for dark theme */
+.dark ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.dark ::-webkit-scrollbar-track {
+  background: transparent;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.1);
+  border-radius: 3px;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+/* Online presence dot */
+.presence-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  border: 2px solid var(--card, #13131E);
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+}
+
+/* Status badge variants */
+.status-on-track { background: rgba(16,185,129,0.12); color: #10B981; }
+.status-at-risk { background: rgba(245,158,11,0.12); color: #F59E0B; }
+.status-behind { background: rgba(239,68,68,0.12); color: #EF4444; }

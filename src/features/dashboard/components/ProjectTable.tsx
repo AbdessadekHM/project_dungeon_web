@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Table,
   TableBody,
@@ -28,10 +28,6 @@ export function ProjectTable({ projects, onProjectSelect }: ProjectTableProps) {
     });
   }, [projects, searchQuery]);
 
-  useEffect(() => {
-    console.log("projects", projects);
-  }, [projects]);
-
   return (
     <div className="space-y-4">
       {/* Toolbar */}
@@ -43,7 +39,7 @@ export function ProjectTable({ projects, onProjectSelect }: ProjectTableProps) {
               placeholder="Filter projects..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-8 text-[13px] pl-8 bg-card border-border focus-visible:ring-1 focus-visible:ring-primary"
+              className="h-8 text-[13px] pl-8 bg-card border-border focus-visible:ring-1 focus-visible:ring-primary rounded-lg"
             />
           </div>
           {searchQuery && (
@@ -59,53 +55,67 @@ export function ProjectTable({ projects, onProjectSelect }: ProjectTableProps) {
       </div>
 
       {/* Table Content */}
-      <div className="rounded-lg border border-border bg-card overflow-hidden">
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow className="border-border bg-secondary/30 hover:bg-secondary/30">
-              <TableHead className="w-[300px] text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2">Project</TableHead>
-              <TableHead className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2">Description</TableHead>
-              <TableHead className="w-[100px] text-center text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2">Tasks</TableHead>
-              <TableHead className="w-[100px] text-center text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2">Members</TableHead>
+              <TableHead className="w-[300px] text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2.5">Project</TableHead>
+              <TableHead className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2.5">Description</TableHead>
+              <TableHead className="w-[100px] text-center text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2.5">Tasks</TableHead>
+              <TableHead className="w-[100px] text-center text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2.5">Members</TableHead>
+              <TableHead className="w-[100px] text-center text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2.5">Status</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredProjects.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={4} className="h-24 text-center text-muted-foreground text-[13px]">
+                <TableCell colSpan={5} className="h-24 text-center text-muted-foreground text-[13px]">
                   No projects found.
                 </TableCell>
               </TableRow>
             ) : (
-              filteredProjects.map((project) => (
-                <TableRow 
-                  key={project.id} 
-                  onClick={() => onProjectSelect(project)}
-                  className="cursor-pointer border-border hover:bg-secondary/50 transition-colors duration-150 group relative"
-                >
-                  {/* Left accent bar */}
-                  <TableCell className="px-4">
-                    <div className="absolute left-0 top-0 h-full w-0.5 bg-primary opacity-0 group-hover:opacity-100 transition-opacity duration-150" />
-                    <div className="flex items-center gap-2">
-                      <Folder className="w-4 h-4 text-primary" />
-                      <span className="text-[13px] font-medium">{project.title}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-muted-foreground text-[13px] truncate max-w-[400px] px-4" title={project.description}>
-                    {project.description}
-                  </TableCell>
-                  <TableCell className="text-center px-4">
-                    <span className="inline-flex items-center justify-center bg-secondary px-2 py-0.5 rounded-full text-[11px] font-medium">
-                      {project.tasks_count || 0}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-center px-4">
-                    <span className="inline-flex items-center justify-center bg-secondary px-2 py-0.5 rounded-full text-[11px] font-medium">
-                      {(project.collaborators_count !== undefined ? project.collaborators_count : (project.collaborators?.length || 0)) + 1}
-                    </span>
-                  </TableCell>
-                </TableRow>
-              ))
+              filteredProjects.map((project) => {
+                const tasksCount = project.tasks_count || 0;
+                const percentage = tasksCount === 0 ? 0 : Math.round((Math.floor(tasksCount * 0.6) / tasksCount) * 100);
+                const statusLabel = percentage >= 70 ? 'On Track' : percentage >= 40 ? 'At Risk' : 'Behind';
+                const statusClass = percentage >= 70 ? 'status-on-track' : percentage >= 40 ? 'status-at-risk' : 'status-behind';
+                
+                return (
+                  <TableRow 
+                    key={project.id} 
+                    onClick={() => onProjectSelect(project)}
+                    className="cursor-pointer border-border hover:bg-secondary/30 transition-colors duration-200 group relative"
+                  >
+                    <TableCell className="px-4">
+                      <div className="absolute left-0 top-0 h-full w-0.5 bg-primary opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                      <div className="flex items-center gap-2.5">
+                        <div className="h-7 w-7 rounded-md bg-accent-subtle flex items-center justify-center shrink-0">
+                          <Folder className="w-3.5 h-3.5 text-primary" />
+                        </div>
+                        <span className="text-[13px] font-medium group-hover:text-primary transition-colors duration-200">{project.title}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-muted-foreground/80 text-[13px] truncate max-w-[400px] px-4" title={project.description}>
+                      {project.description}
+                    </TableCell>
+                    <TableCell className="text-center px-4">
+                      <span className="inline-flex items-center justify-center bg-secondary px-2 py-0.5 rounded-full text-[11px] font-medium">
+                        {tasksCount}
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-center px-4">
+                      <span className="inline-flex items-center justify-center bg-secondary px-2 py-0.5 rounded-full text-[11px] font-medium">
+                        {(project.collaborators_count !== undefined ? project.collaborators_count : (project.collaborators?.length || 0)) + 1}
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-center px-4">
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${statusClass}`}>
+                        {statusLabel}
+                      </span>
+                    </TableCell>
+                  </TableRow>
+                );
+              })
             )}
           </TableBody>
         </Table>

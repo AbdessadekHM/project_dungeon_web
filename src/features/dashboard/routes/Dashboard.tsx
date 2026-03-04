@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, LayoutGrid, List } from 'lucide-react';
+import { Plus, LayoutGrid, List, Folder, Activity } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { ProjectCard } from '@/features/projects/components/ProjectCard';
@@ -40,23 +40,24 @@ export function Dashboard() {
   }, []);
 
   return (
-    <div className="p-4 sm:p-6 max-w-7xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-[15px] font-semibold tracking-tight text-foreground">Dashboard</h1>
-          <p className="text-muted-foreground mt-0.5 text-[13px]">Manage your projects and collaborate with your team.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">Dashboard</h1>
+          <p className="text-muted-foreground mt-1 text-sm">Manage your projects and collaborate with your team.</p>
         </div>
         <div className="flex items-center gap-2">
           {/* View Toggle */}
-          <div className="flex items-center bg-secondary/50 p-0.5 rounded-md border border-border">
+          <div className="flex items-center bg-secondary/50 p-0.5 rounded-lg border border-border">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => setViewMode('grid')}
               className={cn(
-                "h-7 w-7 rounded-sm transition-all duration-150",
+                "h-7 w-7 rounded-md transition-all duration-200",
                 viewMode === 'grid' 
-                  ? 'bg-card shadow-sm text-foreground' 
+                  ? 'bg-primary text-primary-foreground shadow-sm' 
                   : 'text-muted-foreground hover:text-foreground'
               )}
             >
@@ -67,9 +68,9 @@ export function Dashboard() {
               size="icon"
               onClick={() => setViewMode('list')}
               className={cn(
-                "h-7 w-7 rounded-sm transition-all duration-150",
+                "h-7 w-7 rounded-md transition-all duration-200",
                 viewMode === 'list' 
-                  ? 'bg-card shadow-sm text-foreground' 
+                  ? 'bg-primary text-primary-foreground shadow-sm' 
                   : 'text-muted-foreground hover:text-foreground'
               )}
             >
@@ -80,10 +81,10 @@ export function Dashboard() {
           <Button 
             onClick={() => setIsCreateModalOpen(true)} 
             className={cn(
-              "h-8 rounded-md text-[13px] font-medium gap-1.5",
+              "h-8 rounded-lg text-[13px] font-medium gap-1.5 px-4",
               "bg-linear-to-br from-indigo-500 to-violet-600 text-white",
-              "hover:brightness-110 hover:shadow-[0_0_0_3px_var(--accent-glow)]",
-              "transition-all duration-150"
+              "hover:brightness-110 hover:shadow-glow-indigo",
+              "transition-all duration-200"
             )}
           >
             <Plus className="h-3.5 w-3.5" />
@@ -92,14 +93,33 @@ export function Dashboard() {
         </div>
       </div>
 
+      {/* Content */}
       {isLoading ? (
-        <div className="flex justify-center p-12">
-          <p className="text-muted-foreground text-[13px] animate-pulse">Loading projects...</p>
+        <div className="flex flex-col items-center justify-center p-16 gap-3">
+          <div className="h-8 w-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+          <p className="text-muted-foreground text-sm">Loading projects...</p>
         </div>
       ) : projects.length === 0 ? (
-        <div className="text-center p-12 border border-dashed border-border rounded-lg bg-secondary/10">
-           <p className="text-muted-foreground mb-4 text-[13px]">You have no projects yet.</p>
-           <Button variant="outline" onClick={() => setIsCreateModalOpen(true)} className="text-[13px] border-border">Create your first project</Button>
+        <div className="text-center py-20 px-8 border border-dashed border-border rounded-xl bg-card/50">
+          <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-5">
+            <Folder className="h-8 w-8 text-primary" />
+          </div>
+          <h3 className="text-lg font-semibold text-foreground mb-2">No projects yet</h3>
+          <p className="text-muted-foreground text-sm mb-6 max-w-sm mx-auto">
+            Create your first project to start tracking tasks, events, and repositories.
+          </p>
+          <Button 
+            onClick={() => setIsCreateModalOpen(true)} 
+            className={cn(
+              "rounded-lg text-sm font-medium gap-2 px-5 py-2 h-auto",
+              "bg-linear-to-br from-indigo-500 to-violet-600 text-white",
+              "hover:brightness-110 hover:shadow-glow-indigo",
+              "transition-all duration-200"
+            )}
+          >
+            <Plus className="h-4 w-4" />
+            Create your first project
+          </Button>
         </div>
       ) : viewMode === 'grid' ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -111,6 +131,19 @@ export function Dashboard() {
         </div>
       ) : (
         <ProjectTable projects={projects} onProjectSelect={handleProjectSelect} />
+      )}
+
+      {/* Recent Activity placeholder — only shown when projects exist */}
+      {!isLoading && projects.length > 0 && (
+        <div className="mt-4">
+          <div className="flex items-center gap-2 mb-4">
+            <Activity className="h-4 w-4 text-muted-foreground" />
+            <h2 className="text-sm font-semibold text-foreground">Recent Activity</h2>
+          </div>
+          <div className="rounded-xl border border-border bg-card/30 p-8 text-center">
+            <p className="text-muted-foreground text-sm">No recent activity to display.</p>
+          </div>
+        </div>
       )}
 
       <CreateProjectModal 

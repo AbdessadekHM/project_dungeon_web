@@ -51,22 +51,22 @@ export function TaskKanbanBoard({ tasks: initialTasks, users, onTaskClick }: Tas
     {
       id: 'todo',
       title: 'To Do',
-      bgClass: 'bg-var(--status-todo-bg)]',
-      dotStyle: { backgroundColor: 'var(--status-todo)' },
+      dotColor: 'var(--status-todo)',
+      bgClass: 'bg-[var(--status-todo-bg)]',
       tasks: tasks.filter(t => t.status === 'todo')
     },
     {
       id: 'in_progress',
       title: 'In Progress',
-      bgClass: 'bg-var(--status-progress-bg)]',
-      dotStyle: { backgroundColor: 'var(--status-progress)' },
+      dotColor: 'var(--status-progress)',
+      bgClass: 'bg-[var(--status-progress-bg)]',
       tasks: tasks.filter(t => t.status === 'in_progress')
     },
     {
       id: 'finished',
       title: 'Finished',
-      bgClass: 'bg-var(--status-done-bg)]',
-      dotStyle: { backgroundColor: 'var(--status-done)' },
+      dotColor: 'var(--status-done)',
+      bgClass: 'bg-[var(--status-done-bg)]',
       tasks: tasks.filter(t => t.status === 'finished')
     }
   ];
@@ -75,10 +75,10 @@ export function TaskKanbanBoard({ tasks: initialTasks, users, onTaskClick }: Tas
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start h-full">
         {columns.map(column => (
-          <div key={column.id} className={`rounded-lg border border-border ${column.bgClass} flex flex-col h-full min-h-[500px]`}>
-            <div className="px-4 py-3 border-b border-border/30 flex items-center justify-between sticky top-0 bg-inherit z-10 rounded-t-lg">
+          <div key={column.id} className={`rounded-xl border border-border ${column.bgClass} flex flex-col h-full min-h-[500px]`}>
+            <div className="px-4 py-3 border-b border-border/30 flex items-center justify-between sticky top-0 bg-inherit z-10 rounded-t-xl">
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full" style={column.dotStyle} />
+                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: column.dotColor }} />
                 <h3 className="font-semibold text-[13px] text-foreground">{column.title}</h3>
               </div>
               <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-card/50 border border-border/50 text-muted-foreground">
@@ -89,12 +89,12 @@ export function TaskKanbanBoard({ tasks: initialTasks, users, onTaskClick }: Tas
             <Droppable droppableId={column.id}>
               {(provided, snapshot) => (
                 <div 
-                  className={`p-3 flex flex-col gap-2 flex-1 overflow-y-auto transition-colors duration-150 ${snapshot.isDraggingOver ? 'bg-primary/5' : ''}`}
+                  className={`p-3 flex flex-col gap-2 flex-1 overflow-y-auto transition-colors duration-200 ${snapshot.isDraggingOver ? 'bg-primary/5' : ''}`}
                   ref={provided.innerRef}
                   {...provided.droppableProps}
                 >
                   {column.tasks.length === 0 ? (
-                    <div className="h-32 border-2 border-dashed border-border/50 rounded-lg flex items-center justify-center text-muted-foreground text-[13px]">
+                    <div className="h-32 border-2 border-dashed border-border/50 rounded-xl flex items-center justify-center text-muted-foreground text-[13px]">
                       No tasks
                     </div>
                   ) : (
