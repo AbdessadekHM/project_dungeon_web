@@ -13,7 +13,7 @@ export function Repositories() {
         <Button 
           className={cn(
             "h-8 rounded-md text-[13px] font-medium gap-1.5",
-            "bg-gradient-to-br from-indigo-500 to-violet-600 text-white",
+            "bg-linear-to-br from-indigo-500 to-violet-600 text-white",
             "hover:brightness-110 hover:shadow-[0_0_0_3px_var(--accent-glow)]",
             "transition-all duration-150"
           )}
@@ -25,7 +25,7 @@ export function Repositories() {
 
       {/* Empty state */}
       <div className="text-center p-16 border border-dashed border-border rounded-lg bg-secondary/10">
-        <div className="h-12 w-12 rounded-xl bg-[var(--accent-subtle)] flex items-center justify-center mx-auto mb-4">
+        <div className="h-12 w-12 rounded-xl bg-accent-subtle flex items-center justify-center mx-auto mb-4">
           <Github className="h-6 w-6 text-primary" />
         </div>
         <p className="text-muted-foreground text-[13px]">No repositories linked. Add a repository to track code changes.</p>

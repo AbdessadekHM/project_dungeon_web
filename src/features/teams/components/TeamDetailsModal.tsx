@@ -68,7 +68,7 @@ export function TeamDetailsModal({ team, open, onOpenChange, allUsers, allProjec
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {/* Owner Card */}
-              <div className="flex items-center gap-3 p-3 rounded-lg border border-primary/20 bg-[var(--accent-subtle)]">
+              <div className="flex items-center gap-3 p-3 rounded-lg border border-primary/20 bg-accent-subtle">
                  <Avatar className="h-8 w-8">
                     <AvatarFallback className="bg-primary/20 text-primary text-[11px] font-bold">O</AvatarFallback>
                  </Avatar>

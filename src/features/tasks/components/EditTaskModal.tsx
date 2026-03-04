@@ -317,7 +317,7 @@ export function EditTaskModal({ open, onOpenChange, onSuccess, project, task }: 
                 disabled={isSubmitting} 
                 className={cn(
                   "min-w-[100px] text-[13px]",
-                  "bg-gradient-to-br from-indigo-500 to-violet-600 text-white",
+                  "bg-linear-to-br from-indigo-500 to-violet-600 text-white",
                   "hover:brightness-110 hover:shadow-[0_0_0_3px_var(--accent-glow)]",
                   "transition-all duration-150"
                 )}

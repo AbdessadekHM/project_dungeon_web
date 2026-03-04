@@ -51,21 +51,21 @@ export function TaskKanbanBoard({ tasks: initialTasks, users, onTaskClick }: Tas
     {
       id: 'todo',
       title: 'To Do',
-      bgClass: 'bg-[var(--status-todo-bg)]',
+      bgClass: 'bg-var(--status-todo-bg)]',
       dotStyle: { backgroundColor: 'var(--status-todo)' },
       tasks: tasks.filter(t => t.status === 'todo')
     },
     {
       id: 'in_progress',
       title: 'In Progress',
-      bgClass: 'bg-[var(--status-progress-bg)]',
+      bgClass: 'bg-var(--status-progress-bg)]',
       dotStyle: { backgroundColor: 'var(--status-progress)' },
       tasks: tasks.filter(t => t.status === 'in_progress')
     },
     {
       id: 'finished',
       title: 'Finished',
-      bgClass: 'bg-[var(--status-done-bg)]',
+      bgClass: 'bg-var(--status-done-bg)]',
       dotStyle: { backgroundColor: 'var(--status-done)' },
       tasks: tasks.filter(t => t.status === 'finished')
     }

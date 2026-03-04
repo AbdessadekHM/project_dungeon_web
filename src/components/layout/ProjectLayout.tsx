@@ -102,7 +102,7 @@ export function ProjectLayout() {
               to={item.path} 
               className={`flex items-center gap-3 px-3 py-1.5 text-[13px] font-medium rounded-md transition-all duration-150 relative ${
                 isActive 
-                  ? 'bg-[var(--accent-subtle)] text-primary' 
+                  ? 'bg-accent-subtle text-primary' 
                   : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
               }`}
             >

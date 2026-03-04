@@ -157,7 +157,7 @@ export function EditTeamModal({ team, open, onOpenChange, onSuccess, allUsers }:
                   <div className="flex flex-col">
                     <span className="text-[13px] font-medium flex items-center gap-2">
                       {allUsers.find(u => u.id === team.owner)?.username || `User #${team.owner}`}
-                      <span className="text-[10px] bg-[var(--accent-subtle)] text-primary px-1.5 py-0.5 rounded-full font-semibold uppercase">Owner</span>
+                      <span className="text-[10px] bg-accent-subtle text-primary px-1.5 py-0.5 rounded-full font-semibold uppercase">Owner</span>
                     </span>
                   </div>
                 </div>
@@ -209,7 +209,7 @@ export function EditTeamModal({ team, open, onOpenChange, onSuccess, allUsers }:
               disabled={isSubmitting}
               className={cn(
                 "text-[13px]",
-                "bg-gradient-to-br from-indigo-500 to-violet-600 text-white",
+                "bg-linear-to-br from-indigo-500 to-violet-600 text-white",
                 "hover:brightness-110 hover:shadow-[0_0_0_3px_var(--accent-glow)]",
                 "transition-all duration-150"
               )}

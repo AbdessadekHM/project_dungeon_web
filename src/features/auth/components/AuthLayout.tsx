@@ -11,7 +11,7 @@ export function AuthLayout({ children, title, description }: AuthLayoutProps) {
   return (
     <div className="min-h-screen relative flex flex-col justify-center items-center p-4 overflow-hidden bg-background">
       {/* Premium Decorative Background Elements */}
-      <div className="absolute top-[-15%] left-[-10%] w-[50%] h-[50%] rounded-full bg-[var(--accent-glow)] blur-[120px] pointer-events-none" />
+      <div className="absolute top-[-15%] left-[-10%] w-[50%] h-[50%] rounded-full bg-var(--accent-glow)] blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-chart-2/15 blur-[100px] pointer-events-none" />
       
       <div className="w-full max-w-md relative z-10 transition-all duration-300 animate-in fade-in slide-in-from-bottom-4">

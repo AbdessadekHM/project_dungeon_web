@@ -81,7 +81,7 @@ export function Dashboard() {
             onClick={() => setIsCreateModalOpen(true)} 
             className={cn(
               "h-8 rounded-md text-[13px] font-medium gap-1.5",
-              "bg-gradient-to-br from-indigo-500 to-violet-600 text-white",
+              "bg-linear-to-br from-indigo-500 to-violet-600 text-white",
               "hover:brightness-110 hover:shadow-[0_0_0_3px_var(--accent-glow)]",
               "transition-all duration-150"
             )}

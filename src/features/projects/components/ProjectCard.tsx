@@ -16,7 +16,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
       <CardHeader className="pb-3">
         <div className="flex justify-between items-start gap-4">
           <CardTitle className="leading-tight text-[15px] font-semibold group-hover:text-primary transition-colors duration-150">{project.title}</CardTitle>
-          <div className="h-9 w-9 rounded-lg bg-[var(--accent-subtle)] flex items-center justify-center shrink-0">
+          <div className="h-9 w-9 rounded-lg bg-accent-subtle flex items-center justify-center shrink-0">
             <Folder className="h-4 w-4 text-primary" />
           </div>
         </div>

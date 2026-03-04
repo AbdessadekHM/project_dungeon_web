@@ -27,7 +27,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+//   SelectValue,
 } from "@/components/ui/select";
 import { StatusBadge } from './StatusBadge';
 import { PriorityBadge } from './PriorityBadge';
@@ -65,8 +65,8 @@ export function TaskTable({ tasks, onTaskUpdate, onTaskClick }: DataTableProps) 
     }
   }, []);
 
-  const formatStatus = (s: string) => s === 'in_progress' ? 'In Progress' : s === 'todo' ? 'Todo' : 'Done';
-  const formatPriority = (p: string) => p.charAt(0).toUpperCase() + p.slice(1);
+//   const formatStatus = (s: string) => s === 'in_progress' ? 'In Progress' : s === 'todo' ? 'Todo' : 'Done';
+//   const formatPriority = (p: string) => p.charAt(0).toUpperCase() + p.slice(1);
 
   return (
     <div className="space-y-4">
