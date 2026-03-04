@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
   Table,
   TableBody,
@@ -27,6 +27,10 @@ export function ProjectTable({ projects, onProjectSelect }: ProjectTableProps) {
              project.description.toLowerCase().includes(query);
     });
   }, [projects, searchQuery]);
+
+  useEffect(() => {
+    console.log("projects", projects);
+  }, [projects]);
 
   return (
     <div className="space-y-4">
@@ -80,8 +84,8 @@ export function ProjectTable({ projects, onProjectSelect }: ProjectTableProps) {
                   className="cursor-pointer border-border hover:bg-secondary/50 transition-colors duration-150 group relative"
                 >
                   {/* Left accent bar */}
-                  <td className="absolute left-0 top-0 h-full w-0.5 bg-primary opacity-0 group-hover:opacity-100 transition-opacity duration-150" />
                   <TableCell className="px-4">
+                    <div className="absolute left-0 top-0 h-full w-0.5 bg-primary opacity-0 group-hover:opacity-100 transition-opacity duration-150" />
                     <div className="flex items-center gap-2">
                       <Folder className="w-4 h-4 text-primary" />
                       <span className="text-[13px] font-medium">{project.title}</span>
@@ -97,7 +101,7 @@ export function ProjectTable({ projects, onProjectSelect }: ProjectTableProps) {
                   </TableCell>
                   <TableCell className="text-center px-4">
                     <span className="inline-flex items-center justify-center bg-secondary px-2 py-0.5 rounded-full text-[11px] font-medium">
-                      {project.collaborators.length + 1}
+                      {(project.collaborators_count !== undefined ? project.collaborators_count : (project.collaborators?.length || 0)) + 1}
                     </span>
                   </TableCell>
                 </TableRow>

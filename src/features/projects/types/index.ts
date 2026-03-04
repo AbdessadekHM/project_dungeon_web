@@ -17,4 +17,5 @@ export interface Project {
   repositories: number[]; 
   teams: number[]; 
   tasks_count?: number; 
+  collaborators_count?: number;
 }

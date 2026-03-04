@@ -27,7 +27,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-//   SelectValue,
+  SelectValue,
 } from "@/components/ui/select";
 import { StatusBadge } from './StatusBadge';
 import { PriorityBadge } from './PriorityBadge';
@@ -162,6 +162,7 @@ export function TaskTable({ tasks, onTaskUpdate, onTaskClick }: DataTableProps) 
             <TableRow className="border-border bg-secondary/30 hover:bg-secondary/30">
               <TableHead className="w-[90px] text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2">Task</TableHead>
               <TableHead className="min-w-[300px] text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2">Title</TableHead>
+              <TableHead className="min-w-[300px] text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2">Type</TableHead>
               <TableHead className="w-[150px] text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2">Status</TableHead>
               <TableHead className="w-[120px] text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2">Priority</TableHead>
               <TableHead className="w-[50px] px-4 py-2"></TableHead>
@@ -181,18 +182,17 @@ export function TaskTable({ tasks, onTaskUpdate, onTaskClick }: DataTableProps) 
                   className="group border-b border-border hover:bg-secondary/50 transition-colors duration-150 relative"
                 >
                   {/* Left accent bar on hover */}
-                  <td className="absolute left-0 top-0 h-full w-0.5 bg-primary opacity-0 group-hover:opacity-100 transition-opacity duration-150" />
+                  {/* <td className="absolute left-0 top-0 h-full w-0.5 bg-primary opacity-0 group-hover:opacity-100 transition-opacity duration-150" /> */}
                   
                   <TableCell className="font-mono text-[12px] text-muted-foreground w-[90px] px-4">
                     TASK-{task.id.toString().padStart(4, '0')}
                   </TableCell>
-                  <TableCell className="px-4">
-                    <div className="flex items-center gap-2">
-                      <TypeBadge type={task.task_type || 'other'} />
-                      <span className="text-[13px] font-medium text-foreground truncate max-w-[500px]" title={task.title}>
-                        {task.title}
-                      </span>
-                    </div>
+                  <TableCell className="font-mono text-[12px] text-muted-foreground w-[90px] px-4">
+                    {task.title}
+                  </TableCell>
+                  <TableCell className="font-mono text-[12px] text-muted-foreground w-[90px] px-4">
+
+                    <TypeBadge type={task.task_type || 'other'} />
                   </TableCell>
                   <TableCell className="px-4">
                     <Select 
@@ -200,9 +200,11 @@ export function TaskTable({ tasks, onTaskUpdate, onTaskClick }: DataTableProps) 
                       onValueChange={(value) => onTaskUpdate?.(task.id, value as Task['status'])}
                     >
                       <SelectTrigger className="w-[140px] h-8 bg-transparent border-none shadow-none focus:ring-0 p-0 hover:bg-secondary/50 rounded-md data-[state=open]:bg-secondary/50 transition-colors">
-                        <div className="flex items-center gap-2 pl-1">
-                          <StatusBadge status={task.status} />
-                        </div>
+                        <SelectValue>
+                          <div className="flex items-center gap-2 pl-1">
+                            <StatusBadge status={task.status} />
+                          </div>
+                        </SelectValue>
                       </SelectTrigger>
                       <SelectContent className="border-border">
                         <SelectItem value="todo">
