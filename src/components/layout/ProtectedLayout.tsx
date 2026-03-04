@@ -20,6 +20,11 @@ export function ProtectedLayout() {
     return <Navigate to="/login" replace />;
   }
 
+  // Redirect admins trying to access regular protected layout to their admin dashboard
+  if (user?.role === 'admin') {
+    return <Navigate to="/admin/dashboard" replace />;
+  }
+
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { path: '/teams', label: 'Teams', icon: Users },

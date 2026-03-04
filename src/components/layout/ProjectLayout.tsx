@@ -5,7 +5,7 @@ import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import { projectApi } from '@/features/projects/api';
 import type { Project } from '@/features/projects/types';
 import { 
-  Menu, LogOut, CheckCircle2, CalendarDays, Github, ChevronDown, Settings
+  Menu, LogOut, CheckCircle2, CalendarDays, Github
 } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { 
@@ -39,6 +39,9 @@ export function ProjectLayout() {
   }
 
   if (!selectedProject) {
+    if (user?.role === 'admin') {
+      return <Navigate to="/admin/projects" replace />;
+    }
     return <Navigate to="/dashboard" replace />;
   }
 
