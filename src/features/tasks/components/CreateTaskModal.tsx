@@ -73,7 +73,7 @@ export function CreateTaskModal({ open, onOpenChange, onSuccess, project }: Crea
   const fetchAssignees = useCallback(async () => {
     try {
       const [allUsers, allTeams] = await Promise.all([
-        adminApi.getUsers(), // Changed from teamApi.getUsers() to adminApi.getUsers()
+        adminApi.getUsers(), 
         teamApi.getTeams()
       ]);
 
