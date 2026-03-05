@@ -5,7 +5,7 @@ import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import { projectApi } from '@/features/projects/api';
 import type { Project } from '@/features/projects/types';
 import { 
-  Menu, LogOut, CheckCircle2, CalendarDays, Github, Bug
+  Menu, LogOut, CheckCircle2, CalendarDays, Github, Bug, ChevronLeft, ChevronRight
 } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { 
@@ -25,6 +25,7 @@ export function ProjectLayout() {
   const { selectedProject, setSelectedProject } = useAppStore();
   const location = useLocation();
   const navigate = useNavigate();
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const [projects, setProjects] = useState<Project[]>([]);
 
@@ -55,51 +56,69 @@ export function ProjectLayout() {
   const SidebarContent = () => (
     <>
       {/* Logo Row */}
-      <div className="h-14 flex items-center px-5 border-b border-sidebar-border gap-3">
-        <img src={logo} alt="Project Dungeon" className="h-7 w-7 cursor-pointer" onClick={() => setSelectedProject(null)} />
-        <span 
-          className="font-semibold text-[14px] tracking-tight text-sidebar-foreground cursor-pointer hover:text-primary transition-colors duration-200 truncate"
-          onClick={() => setSelectedProject(null)}
-          title="Back to Main Dashboard"
+      <div className="h-14 flex items-center px-4 border-b border-sidebar-border gap-3 relative">
+        <img src={logo} alt="Project Dungeon" className="h-7 w-7 cursor-pointer shrink-0" onClick={() => setSelectedProject(null)} />
+        {!isCollapsed && (
+          <span 
+            className="font-semibold text-[14px] tracking-tight text-sidebar-foreground cursor-pointer hover:text-primary transition-colors duration-200 truncate pr-6 animate-in fade-in"
+            onClick={() => setSelectedProject(null)}
+            title="Back to Main Dashboard"
+          >
+            Project Dungeon
+          </span>
+        )}
+        
+        {/* Toggle Button */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-6 w-6 absolute right-2 hover:bg-sidebar-accent text-muted-foreground hidden md:flex"
+          onClick={() => setIsCollapsed(!isCollapsed)}
         >
-          Project Dungeon
-        </span>
+          {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+        </Button>
       </div>
 
       {/* Project Switcher */}
-      <div className="px-3 pt-4 pb-2">
-        {selectedProject && (
-          <Select 
-            value={selectedProject.id.toString()} 
-            onValueChange={(val) => {
-              const proj = projects.find(p => p.id.toString() === val);
-              if (proj) {
-                setSelectedProject(proj);
-                navigate(`/projects/${proj.id}/tasks`);
-              }
-            }}
-          >
-            <SelectTrigger className="w-full h-9 text-[13px] font-medium border-sidebar-border bg-sidebar-accent/50 hover:bg-sidebar-accent transition-colors duration-200 rounded-lg">
-              <SelectValue placeholder="Select a project" />
-            </SelectTrigger>
-            <SelectContent align="start" className="border-border shadow-lg">
-              {projects.map(project => (
-                <SelectItem key={project.id} value={project.id.toString()} className="cursor-pointer text-[13px]">
-                  {project.title}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        )}
-      </div>
+      {!isCollapsed && (
+        <div className="px-3 pt-4 pb-2 animate-in fade-in duration-200">
+          {selectedProject && (
+            <Select 
+              value={selectedProject.id.toString()} 
+              onValueChange={(val) => {
+                const proj = projects.find(p => p.id.toString() === val);
+                if (proj) {
+                  setSelectedProject(proj);
+                  navigate(`/projects/${proj.id}/tasks`);
+                }
+              }}
+            >
+              <SelectTrigger className="w-full h-9 text-[13px] font-medium border-sidebar-border bg-sidebar-accent/50 hover:bg-sidebar-accent transition-colors duration-200 rounded-lg">
+                <SelectValue placeholder="Select a project" />
+              </SelectTrigger>
+              <SelectContent align="start" className="border-border shadow-lg">
+                {projects.map(project => (
+                  <SelectItem key={project.id} value={project.id.toString()} className="cursor-pointer text-[13px]">
+                    {project.title}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        </div>
+      )}
+
+      {isCollapsed && <div className="h-4" />} {/* Spacer for collapsed mode */}
 
       <Separator className="mx-3 bg-sidebar-border" />
       
       {/* Nav Items */}
       <nav className="flex-1 overflow-y-auto py-3 px-3 space-y-1">
-        <div className="px-3 pb-2.5 pt-1 text-[10px] uppercase font-bold text-muted-foreground/60 tracking-[0.08em]">
-          Project
-        </div>
+        {!isCollapsed && (
+          <div className="px-3 pb-2.5 pt-1 text-[10px] uppercase font-bold text-muted-foreground/60 tracking-[0.08em] animate-in fade-in duration-200">
+            Project
+          </div>
+        )}
         {navItems.map((item) => {
           const isActive = location.pathname.startsWith(item.path);
           const Icon = item.icon;
@@ -107,14 +126,15 @@ export function ProjectLayout() {
             <Link 
               key={item.path}
               to={item.path} 
+              title={isCollapsed ? item.label : undefined}
               className={`flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium rounded-lg transition-all duration-200 relative ${
                 isActive 
                   ? 'nav-active-pill text-primary' 
                   : 'text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground'
-              }`}
+              } ${isCollapsed ? 'justify-center px-0' : ''}`}
             >
               <Icon className={`h-4 w-4 shrink-0 ${isActive ? 'text-primary' : ''}`} />
-              {item.label}
+              {!isCollapsed && <span className="animate-in fade-in duration-200">{item.label}</span>}
             </Link>
           );
         })}
@@ -125,27 +145,32 @@ export function ProjectLayout() {
         <div className="p-3">
           <Button 
             variant="ghost" 
-            className="w-full justify-start text-muted-foreground hover:text-foreground text-[13px] h-8 rounded-lg"
+            title={isCollapsed ? "Exit Project" : undefined}
+            className={`w-full text-muted-foreground hover:text-foreground text-[13px] h-8 rounded-lg ${
+              isCollapsed ? 'justify-center px-0' : 'justify-start'
+            }`}
             onClick={() => setSelectedProject(null)}
           >
-            <LogOut className="h-4 w-4 mr-2" />
-            Exit Project
+            <LogOut className={`h-4 w-4 ${isCollapsed ? '' : 'mr-2'}`} />
+            {!isCollapsed && <span className="animate-in fade-in duration-200">Exit Project</span>}
           </Button>
         </div>
         <div className="px-3 pb-3">
-          <div className="flex items-center gap-3 px-2 py-1.5 rounded-lg">
-            <div className="relative">
+          <div className={`flex items-center gap-3 px-2 py-1.5 rounded-lg ${isCollapsed ? 'justify-center px-0' : ''}`}>
+            <div className="relative shrink-0">
               <Avatar className="h-8 w-8 border-2 border-sidebar-border">
                 <AvatarFallback className="bg-primary/15 text-primary font-semibold text-[11px]">
                   {user?.username ? user.username.substring(0, 2).toUpperCase() : 'US'}
                 </AvatarFallback>
               </Avatar>
-              <div className="presence-dot" />
+              <div className={`presence-dot ${isCollapsed ? 'right-0 -bottom-0.5' : ''}`} />
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[13px] font-medium text-sidebar-foreground truncate">{user?.username || 'User'}</p>
-              <p className="text-[11px] text-muted-foreground truncate">{user?.role || 'Member'}</p>
-            </div>
+            {!isCollapsed && (
+              <div className="flex-1 min-w-0 animate-in fade-in duration-200">
+                <p className="text-[13px] font-medium text-sidebar-foreground truncate">{user?.username || 'User'}</p>
+                <p className="text-[11px] text-muted-foreground truncate">{user?.role || 'Member'}</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -155,7 +180,11 @@ export function ProjectLayout() {
   return (
     <div className="flex h-screen bg-background text-foreground overflow-hidden">
       {/* Sidebar */}
-      <aside className="hidden md:flex w-[220px] border-r border-sidebar-border bg-sidebar shrink-0 flex-col">
+      <aside 
+        className={`hidden md:flex border-r border-sidebar-border bg-sidebar shrink-0 flex-col transition-all duration-300 ease-in-out ${
+          isCollapsed ? 'w-[75px]' : 'w-[220px]'
+        }`}
+      >
         <SidebarContent />
       </aside>
 
