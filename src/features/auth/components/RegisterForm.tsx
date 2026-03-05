@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Link } from "react-router-dom"
-
+import {toast} from "sonner"
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -52,9 +52,11 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
     const {confirmPassword, ...data} = values
 
     try{
-      const response = await axios.post(import.meta.env.VITE_API_URL + "/account/register/", data)
+      await axios.post(import.meta.env.VITE_API_URL + "/account/register/", data)
+      toast.success("Registeration successfull")
       onSuccess()
     } catch (error) {
+      toast.error("Registeration failed")
     }
   }
 
