@@ -5,7 +5,7 @@ import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import { projectApi } from '@/features/projects/api';
 import type { Project } from '@/features/projects/types';
 import { 
-  Menu, LogOut, CheckCircle2, CalendarDays, Github
+  Menu, LogOut, CheckCircle2, CalendarDays, Github, Bug
 } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { 
@@ -49,6 +49,7 @@ export function ProjectLayout() {
     { path: `/projects/${selectedProject.id}/tasks`, label: 'Dashboard', icon: CheckCircle2 },
     { path: `/projects/${selectedProject.id}/events`, label: 'Events', icon: CalendarDays },
     { path: `/projects/${selectedProject.id}/repositories`, label: 'Repositories', icon: Github },
+    { path: `/projects/${selectedProject.id}/issues`, label: 'Issues', icon: Bug },
   ];
 
   const SidebarContent = () => (

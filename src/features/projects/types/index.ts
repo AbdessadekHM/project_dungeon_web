@@ -1,4 +1,5 @@
-
+import type { Task } from '@/features/tasks/types';
+export type { Task };
 
 export interface User {
   id: number;
@@ -19,3 +20,4 @@ export interface Project {
   tasks_count?: number; 
   collaborators_count?: number;
 }
+

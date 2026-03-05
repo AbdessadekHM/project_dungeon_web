@@ -13,6 +13,7 @@ import { AdminLayout } from '../features/admin/layouts/AdminLayout';
 import { AdminDashboard } from '../features/admin/pages/AdminDashboard';
 import { UsersManagement } from '../features/admin/pages/UsersManagement';
 import { GoogleCallback } from '../features/events/components/GoogleCallback';
+import { Issues } from '@/features/issues/routes/Issues';
 
 const router = createBrowserRouter([
   {
@@ -86,6 +87,10 @@ const router = createBrowserRouter([
       {
         path: 'repositories',
         element: <Repositories />
+      },
+      {
+        path: 'issues',
+        element: <Issues />
       }
     ]
   }
