@@ -10,9 +10,7 @@ export const taskApi = {
   },
   
   createTask: async (data: CreateTaskDTO): Promise<Task> => {
-    console.log("Calling create task", data)
     const response = await apiClient.post<Task>('/management/tasks/', data);
-    console.log("Calling create task", response.data)
     return response.data;
   },
 

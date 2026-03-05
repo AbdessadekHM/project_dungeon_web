@@ -16,8 +16,8 @@ export interface Project {
   owner: number; 
   collaborators: number[]; 
   repositories: number[]; 
-  teams: number[]; 
   tasks_count?: number; 
+  completed_tasks_count?: number;
   collaborators_count?: number;
 }
 

@@ -8,9 +8,8 @@ interface ProjectCardProps {
   project: Project;
 }
 
-function getStatusInfo(tasksCount: number) {
-  // Simulate completion for demo — in production this would come from API
-  const completed = Math.floor(tasksCount * (0.3 + Math.random() * 0.6));
+function getStatusInfo(tasksCount: number, completedTasksCount: number) {
+  const completed = completedTasksCount || 0;
   const percentage = tasksCount === 0 ? 0 : Math.round((completed / tasksCount) * 100);
   
   let status: 'on-track' | 'at-risk' | 'behind';
@@ -42,7 +41,8 @@ function getTimeAgo() {
 
 export function ProjectCard({ project }: ProjectCardProps) {
   const tasksCount = project.tasks_count || 0;
-  const { completed, percentage, label, cssClass } = getStatusInfo(tasksCount);
+  const completedTasksCount = project.completed_tasks_count || 0;
+  const { completed, percentage, label, cssClass } = getStatusInfo(tasksCount, completedTasksCount);
   const timeAgo = getTimeAgo();
 
   return (

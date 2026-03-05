@@ -49,17 +49,12 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
   })
   
   async function onSubmit(values: RegisterFormValues) {
-    console.log(values)
     const {confirmPassword, ...data} = values
-    console.log(data)
 
     try{
       const response = await axios.post(import.meta.env.VITE_API_URL + "/account/register/", data)
-      console.log(response.data)
-      console.log(response.status)
       onSuccess()
     } catch (error) {
-      console.log(error)
     }
   }
 

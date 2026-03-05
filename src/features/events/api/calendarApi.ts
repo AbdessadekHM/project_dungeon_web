@@ -71,8 +71,6 @@ export const calendarApi = {
       );
       if (!response.ok) return [];
       const data = await response.json();
-      console.log("fetched data is ")
-      console.log(data)
       return data || [];
     } catch (error) {
       console.error('Failed to fetch public holidays:', error);
