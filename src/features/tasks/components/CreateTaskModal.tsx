@@ -78,7 +78,9 @@ export function CreateTaskModal({ open, onOpenChange, onSuccess, project }: Crea
       ]);
 
       const collaboratorIds = new Set(project.collaborators);
-      const projectTeams = allTeams.filter(team => team.projects.includes(project.id));
+      const projectTeams = allTeams.filter(team => 
+        team.projects.includes(project.id) || project.teams?.includes(team.id)
+      );
       
       projectTeams.forEach(team => {
         collaboratorIds.add(team.owner);

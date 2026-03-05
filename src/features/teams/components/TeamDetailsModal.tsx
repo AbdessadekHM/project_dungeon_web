@@ -29,7 +29,7 @@ export function TeamDetailsModal({ team, open, onOpenChange, allUsers, allProjec
   if (!team) return null;
 
   const owner = allUsers.find(u => u.id === team.owner);
-  const teamProjects = allProjects.filter(p => team.projects.includes(p.id));
+  const teamProjects = allProjects.filter(p => team.projects.includes(p.id) || p.teams?.includes(team.id));
 
   const handleProjectClick = (project: Project) => {
     setSelectedProject(project);

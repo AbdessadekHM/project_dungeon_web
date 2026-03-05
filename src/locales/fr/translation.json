@@ -65,7 +65,12 @@
     "collaboratorsDescription": "Recherchez et sélectionnez des utilisateurs pour collaborer sur ce projet. Vous êtes automatiquement défini comme propriétaire.",
     "creating": "Création...",
     "titleRequired": "Le titre est requis",
-    "descriptionRequired": "La description est requise"
+    "descriptionRequired": "La description est requise",
+    "teams": "Équipes",
+    "selectTeams": "Sélectionner des équipes...",
+    "searchTeam": "Rechercher une équipe par nom...",
+    "noTeamFound": "Aucune équipe trouvée.",
+    "teamsDescription": "Recherchez et sélectionnez des équipes à affecter à ce projet. Les membres de l'équipe seront automatiquement inclus comme collaborateurs."
   },
   "teams": {
     "title": "Équipes",

@@ -65,7 +65,12 @@
     "collaboratorsDescription": "Search and select users to collaborate on this project. You are automatically set as the owner.",
     "creating": "Creating...",
     "titleRequired": "Title is required",
-    "descriptionRequired": "Description is required"
+    "descriptionRequired": "Description is required",
+    "teams": "Teams",
+    "selectTeams": "Select teams...",
+    "searchTeam": "Search team by name...",
+    "noTeamFound": "No team found.",
+    "teamsDescription": "Search and select teams to assign to this project. Team members will be automatically included as collaborators."
   },
   "teams": {
     "title": "Teams",
