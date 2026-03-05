@@ -7,6 +7,7 @@ import { ProjectLayout } from '../components/layout/ProjectLayout';
 import { Tasks } from '../features/tasks/routes/Tasks';
 import { Events } from '../features/events/routes/Events';
 import { Repositories } from '../features/repositories/routes/Repositories';
+import { Chat } from '../features/chat/routes/Chat';
 
 // Admin imports
 import { AdminLayout } from '../features/admin/layouts/AdminLayout';
@@ -91,6 +92,10 @@ const router = createBrowserRouter([
       {
         path: 'issues',
         element: <Issues />
+      },
+      {
+        path: 'chat',
+        element: <Chat />
       }
     ]
   }

@@ -5,7 +5,7 @@ import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import { projectApi } from '@/features/projects/api';
 import type { Project } from '@/features/projects/types';
 import { 
-  Menu, LogOut, CheckCircle2, CalendarDays, Github, Bug, ChevronLeft, ChevronRight
+  Menu, LogOut, CheckCircle2, CalendarDays, Github, Bug, ChevronLeft, ChevronRight, MessageSquare
 } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { 
@@ -54,6 +54,10 @@ export function ProjectLayout() {
     { path: `/projects/${selectedProject.id}/events`, label: t('common.events'), icon: CalendarDays },
     { path: `/projects/${selectedProject.id}/repositories`, label: t('common.repositories'), icon: Github },
     { path: `/projects/${selectedProject.id}/issues`, label: t('common.issues'), icon: Bug },
+  ];
+
+  const activityItems = [
+    { path: `/projects/${selectedProject.id}/chat`, label: 'Chat', icon: MessageSquare },
   ];
 
   const SidebarContent = () => (
@@ -142,6 +146,35 @@ export function ProjectLayout() {
           );
         })}
       </nav>
+
+      {/* Activity Section */}
+      <div className="px-3 pb-1">
+        <div className="h-px bg-sidebar-border mb-2" />
+        {!isCollapsed && (
+          <div className="px-3 pb-2 pt-1 text-[10px] uppercase font-bold text-muted-foreground/60 tracking-[0.08em] animate-in fade-in duration-200">
+            Activity
+          </div>
+        )}
+        {activityItems.map((item) => {
+          const isActive = location.pathname.startsWith(item.path);
+          const Icon = item.icon;
+          return (
+            <Link
+              key={item.path}
+              to={item.path}
+              title={isCollapsed ? item.label : undefined}
+              className={`flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium rounded-lg transition-all duration-200 relative ${
+                isActive
+                  ? 'nav-active-pill text-primary'
+                  : 'text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground'
+              } ${isCollapsed ? 'justify-center px-0' : ''}`}
+            >
+              <Icon className={`h-4 w-4 shrink-0 ${isActive ? 'text-primary' : ''}`} />
+              {!isCollapsed && <span className="animate-in fade-in duration-200">{item.label}</span>}
+            </Link>
+          );
+        })}
+      </div>
       
       {/* Exit Project + User */}
       <div className="border-t border-sidebar-border">
