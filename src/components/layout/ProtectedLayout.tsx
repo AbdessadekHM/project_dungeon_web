@@ -11,12 +11,15 @@ import {
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { ModeToggle } from '@/components/mode-toggle';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { useTranslation } from 'react-i18next';
 import logo from '@/assets/logo.png';
 
 export function ProtectedLayout() {
   const { isAuthenticated, user, clearAuth } = useAuthStore();
   const location = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const { t } = useTranslation();
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
@@ -28,18 +31,18 @@ export function ProtectedLayout() {
   }
 
   const navItems = [
-    { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { path: '/teams', label: 'Teams', icon: Users },
+    { path: '/dashboard', label: t('common.dashboard'), icon: LayoutDashboard },
+    { path: '/teams', label: t('common.teams'), icon: Users },
   ];
 
   const SidebarContent = () => (
     <>
       {/* Logo Row */}
       <div className="h-14 flex items-center px-4 border-b border-sidebar-border gap-3 relative">
-        <img src={logo} alt="Project Dungeon" className="h-7 w-7 shrink-0" />
+        <img src={logo} alt={t('sidebar.projectDungeon')} className="h-7 w-7 shrink-0" />
         {!isCollapsed && (
           <span className="font-semibold text-[14px] tracking-tight text-sidebar-foreground truncate pr-6 animate-in fade-in duration-200">
-            Project Dungeon
+            {t('sidebar.projectDungeon')}
           </span>
         )}
         
@@ -58,7 +61,7 @@ export function ProtectedLayout() {
       <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
         {!isCollapsed && (
           <div className="px-3 pb-2.5 pt-1 text-[10px] uppercase font-bold text-muted-foreground/60 tracking-[0.08em] animate-in fade-in duration-200">
-            Workspace
+            {t('sidebar.workspace')}
           </div>
         )}
         {navItems.map((item) => {
@@ -95,8 +98,8 @@ export function ProtectedLayout() {
           </div>
           {!isCollapsed && (
             <div className="flex-1 min-w-0 animate-in fade-in duration-200">
-              <p className="text-[13px] font-medium text-sidebar-foreground truncate">{user?.username || 'User'}</p>
-              <p className="text-[11px] text-muted-foreground truncate">{user?.role || 'Member'}</p>
+              <p className="text-[13px] font-medium text-sidebar-foreground truncate">{user?.username || t('common.user')}</p>
+              <p className="text-[11px] text-muted-foreground truncate">{user?.role || t('common.member')}</p>
             </div>
           )}
         </div>
@@ -124,7 +127,7 @@ export function ProtectedLayout() {
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="md:hidden shrink-0 h-8 w-8">
                   <Menu className="h-4 w-4" />
-                  <span className="sr-only">Toggle Menu</span>
+                  <span className="sr-only">{t('common.toggleMenu')}</span>
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="w-[220px] p-0 shrink-0 flex flex-col bg-sidebar border-r-sidebar-border">
@@ -136,6 +139,7 @@ export function ProtectedLayout() {
           </div>
           
           <div className="flex items-center gap-2">
+            <LanguageSwitcher />
             <ModeToggle />
             <DropdownMenu>
               <DropdownMenuTrigger className="outline-none">
@@ -148,14 +152,14 @@ export function ProtectedLayout() {
               <DropdownMenuContent align="end" className="w-56 mt-2 border-border shadow-lg">
                 <DropdownMenuLabel>
                   <div className="flex flex-col space-y-1">
-                    <p className="text-[13px] font-medium leading-none">{user?.username || 'User'}</p>
+                    <p className="text-[13px] font-medium leading-none">{user?.username || t('common.user')}</p>
                     <p className="text-[11px] leading-none text-muted-foreground">{user?.email || 'user@example.com'}</p>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator className="bg-border" />
                 <DropdownMenuItem onClick={clearAuth} className="text-destructive focus:bg-destructive/10 focus:text-destructive cursor-pointer text-[13px]">
                   <LogOut className="mr-2 h-4 w-4" />
-                  <span>Log out</span>
+                  <span>{t('common.logout')}</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

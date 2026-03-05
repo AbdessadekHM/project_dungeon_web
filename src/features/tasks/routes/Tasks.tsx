@@ -15,6 +15,8 @@ import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import type { Task } from '../types';
 import type { User } from '@/features/projects/types';
 
+import { useTranslation } from 'react-i18next';
+
 export function Tasks() {
   const { projectId } = useParams();
   const { selectedProject } = useAppStore();
@@ -25,6 +27,7 @@ export function Tasks() {
   const [isLoading, setIsLoading] = useState(true);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const { t } = useTranslation();
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
@@ -69,8 +72,8 @@ export function Tasks() {
     <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">Tasks</h1>
-          <p className="text-muted-foreground mt-1 text-sm">Manage and track project tasks.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">{t('tasks.title')}</h1>
+          <p className="text-muted-foreground mt-1 text-sm">{t('tasks.description')}</p>
         </div>
         
         <div className="flex items-center gap-2">
@@ -116,7 +119,7 @@ export function Tasks() {
               )}
             >
               <Plus className="h-3.5 w-3.5" />
-              Create Task
+              {t('tasks.createTask')}
             </Button>
           )}
         </div>
@@ -125,16 +128,16 @@ export function Tasks() {
       {isLoading ? (
         <div className="flex flex-col items-center justify-center p-16 gap-3">
           <div className="h-8 w-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
-          <p className="text-muted-foreground text-sm">Loading tasks...</p>
+          <p className="text-muted-foreground text-sm">{t('tasks.loading')}</p>
         </div>
       ) : tasks.length === 0 ? (
         <div className="text-center py-20 px-8 border border-dashed border-border rounded-xl bg-card/50">
           <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-5">
             <CheckCircle2 className="h-8 w-8 text-primary" />
           </div>
-          <h3 className="text-lg font-semibold text-foreground mb-2">No tasks yet</h3>
+          <h3 className="text-lg font-semibold text-foreground mb-2">{t('tasks.noTasks')}</h3>
           <p className="text-muted-foreground text-sm mb-6 max-w-sm mx-auto">
-            Create your first task to start tracking work.
+            {t('tasks.noTasksDescription')}
           </p>
           {(user?.role === 'admin' || user?.id === selectedProject?.owner) && (
             <Button 
@@ -147,7 +150,7 @@ export function Tasks() {
               )}
             >
               <Plus className="h-4 w-4" />
-              Create your first task
+              {t('tasks.createFirst')}
             </Button>
           )}
         </div>

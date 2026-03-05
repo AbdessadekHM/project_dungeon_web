@@ -42,9 +42,18 @@ interface CreateIssueDialogProps {
   onIssueCreated: () => void;
 }
 
+import { useTranslation } from 'react-i18next';
+
 export function CreateIssueDialog({ projectId, open, onOpenChange, onIssueCreated }: CreateIssueDialogProps) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const { t } = useTranslation();
+
+  const issueSchema = z.object({
+    title: z.string().min(1, t('issues.titleRequired')).max(150),
+    description: z.string().min(1, t('issues.descriptionRequired')),
+    task: z.string().min(1, t('issues.taskRequired')),
+  });
 
   const form = useForm<IssueFormValues>({
     resolver: zodResolver(issueSchema),
@@ -73,14 +82,14 @@ export function CreateIssueDialog({ projectId, open, onOpenChange, onIssueCreate
         task: parseInt(data.task, 10),
         project: projectId,
       });
-      toast.success('Issue created successfully', {
-        description: 'Your issue has been logged.',
+      toast.success(t('issues.successCreated'), {
+        description: t('issues.successCreatedDesc'),
       });
       onIssueCreated();
       onOpenChange(false);
     } catch {
-      toast.error('Error', {
-        description: 'Failed to create issue. Please try again.',
+      toast.error(t('issues.errorTitle'), {
+        description: t('issues.errorCreated'),
       });
     } finally {
       setIsLoading(false);
@@ -91,9 +100,9 @@ export function CreateIssueDialog({ projectId, open, onOpenChange, onIssueCreate
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Report an Issue</DialogTitle>
+          <DialogTitle>{t('issues.reportTitle')}</DialogTitle>
           <DialogDescription>
-            Report a problem or bug related to a specific task in this project.
+            {t('issues.reportDescription')}
           </DialogDescription>
         </DialogHeader>
 
@@ -104,9 +113,9 @@ export function CreateIssueDialog({ projectId, open, onOpenChange, onIssueCreate
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Title</FormLabel>
+                  <FormLabel>{t('common.title')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="E.g., Login button not working" {...field} />
+                    <Input placeholder={t('issues.titlePlaceholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -118,11 +127,11 @@ export function CreateIssueDialog({ projectId, open, onOpenChange, onIssueCreate
               name="task"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Related Task</FormLabel>
+                  <FormLabel>{t('issues.relatedTask')}</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a task" />
+                        <SelectValue placeholder={t('issues.selectTask')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -143,10 +152,10 @@ export function CreateIssueDialog({ projectId, open, onOpenChange, onIssueCreate
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel>{t('common.description')}</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Describe the issue in detail..."
+                      placeholder={t('issues.describeDetail')}
                       className="min-h-[100px]"
                       {...field}
                     />
@@ -158,10 +167,10 @@ export function CreateIssueDialog({ projectId, open, onOpenChange, onIssueCreate
 
             <DialogFooter className="pt-4">
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-                Cancel
+                {t('common.cancel')}
               </Button>
               <Button type="submit" disabled={isLoading}>
-                {isLoading ? 'Creating...' : 'Create Issue'}
+                {isLoading ? t('issues.creating') : t('issues.saveIssue')}
               </Button>
             </DialogFooter>
           </form>

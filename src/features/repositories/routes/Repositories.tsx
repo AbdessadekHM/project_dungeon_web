@@ -3,17 +3,19 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import { useAppStore } from '@/stores/useAppStore';
+import { useTranslation } from 'react-i18next';
 
 export function Repositories() {
   const { user } = useAuthStore();
   const { selectedProject } = useAppStore();
+  const { t } = useTranslation();
 
   return (
     <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">Repositories</h1>
-          <p className="text-muted-foreground mt-1 text-sm">Manage project repositories here.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">{t('repositories.title')}</h1>
+          <p className="text-muted-foreground mt-1 text-sm">{t('repositories.description')}</p>
         </div>
         
         {(user?.role === 'admin' || user?.id === selectedProject?.owner) && (
@@ -26,7 +28,7 @@ export function Repositories() {
             )}
           >
             <Plus className="h-3.5 w-3.5" />
-            Add Repository
+            {t('repositories.addRepository')}
           </Button>
         )}
       </div>
@@ -36,9 +38,9 @@ export function Repositories() {
         <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-5">
           <Github className="h-8 w-8 text-primary" />
         </div>
-        <h3 className="text-lg font-semibold text-foreground mb-2">No repositories linked</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-2">{t('repositories.noRepositories')}</h3>
         <p className="text-muted-foreground text-sm max-w-sm mx-auto">
-          Add a repository to track code changes and keep your team in sync.
+          {t('repositories.noRepositoriesDesc')}
         </p>
       </div>
     </div>

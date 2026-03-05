@@ -6,8 +6,10 @@ import { UserTable } from '../components/UserTable';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { CreateUserModal } from '../components/CreateUserModal';
+import { useTranslation } from 'react-i18next';
 
 export function UsersManagement() {
+  const { t } = useTranslation();
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -30,12 +32,12 @@ export function UsersManagement() {
   }, []);
 
   const handleEditRole = (user: User) => {
-    alert(`Editing role for ${user.username} is not fully implemented yet.`);
+    alert(`${t('admin.notImplemented')} (${t('admin.editRole')} - ${user.username})`);
   };
 
   const handleDeleteUser = (user: User) => {
-    if (confirm(`Are you sure you want to delete ${user.username}?`)) {
-      alert(`Deletion for ${user.username} is not fully implemented yet.`);
+    if (confirm(t('admin.deleteConfirm', { username: user.username }))) {
+      alert(`${t('admin.notImplemented')} (${t('admin.deleteUser')} - ${user.username})`);
     }
   };
 
@@ -45,10 +47,10 @@ export function UsersManagement() {
         <div>
           <h1 className="text-[15px] font-semibold tracking-tight text-foreground flex items-center gap-2">
             <Shield className="w-5 h-5 text-red-500" />
-            Users Management
+            {t('admin.usersManagement')}
           </h1>
           <p className="text-muted-foreground mt-0.5 text-[13px]">
-            Manage all collaborators across the platform.
+            {t('admin.manageCollaborators')}
           </p>
         </div>
         
@@ -63,14 +65,14 @@ export function UsersManagement() {
             )}
           >
             <Plus className="h-3.5 w-3.5" />
-            Create User
+            {t('admin.createUser')}
           </Button>
         </div>
       </div>
 
       {isLoading ? (
         <div className="flex justify-center p-12">
-          <p className="text-muted-foreground text-[13px] animate-pulse">Loading users...</p>
+          <p className="text-muted-foreground text-[13px] animate-pulse">{t('admin.loadingUsers')}</p>
         </div>
       ) : (
         <UserTable 

@@ -17,8 +17,11 @@ interface ProjectTableProps {
   onProjectSelect: (project: Project) => void;
 }
 
+import { useTranslation } from 'react-i18next';
+
 export function ProjectTable({ projects, onProjectSelect }: ProjectTableProps) {
   const [searchQuery, setSearchQuery] = useState('');
+  const { t } = useTranslation();
 
   const filteredProjects = useMemo(() => {
     return projects.filter(project => {
@@ -36,7 +39,7 @@ export function ProjectTable({ projects, onProjectSelect }: ProjectTableProps) {
           <div className="relative w-[150px] lg:w-[250px]">
             <Search className="absolute left-2.5 top-2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Filter projects..."
+              placeholder={t('common.filterProjects')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="h-8 text-[13px] pl-8 bg-card border-border focus-visible:ring-1 focus-visible:ring-primary rounded-lg"
@@ -48,7 +51,7 @@ export function ProjectTable({ projects, onProjectSelect }: ProjectTableProps) {
               onClick={() => setSearchQuery('')}
               className="h-8 px-2 text-muted-foreground text-[13px]"
             >
-              Reset
+              {t('common.reset')}
             </Button>
           )}
         </div>
@@ -59,25 +62,26 @@ export function ProjectTable({ projects, onProjectSelect }: ProjectTableProps) {
         <Table>
           <TableHeader>
             <TableRow className="border-border bg-secondary/30 hover:bg-secondary/30">
-              <TableHead className="w-[300px] text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2.5">Project</TableHead>
-              <TableHead className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2.5">Description</TableHead>
-              <TableHead className="w-[100px] text-center text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2.5">Tasks</TableHead>
-              <TableHead className="w-[100px] text-center text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2.5">Members</TableHead>
-              <TableHead className="w-[100px] text-center text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2.5">Status</TableHead>
+              <TableHead className="w-[300px] text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2.5">{t('common.project')}</TableHead>
+              <TableHead className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2.5">{t('common.description')}</TableHead>
+              <TableHead className="w-[100px] text-center text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2.5">{t('common.tasksColumn')}</TableHead>
+              <TableHead className="w-[100px] text-center text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2.5">{t('common.membersColumn')}</TableHead>
+              <TableHead className="w-[100px] text-center text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2.5">{t('common.statusColumn')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredProjects.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={5} className="h-24 text-center text-muted-foreground text-[13px]">
-                  No projects found.
+                  {t('common.noProjectsFound')}
                 </TableCell>
               </TableRow>
             ) : (
               filteredProjects.map((project) => {
                 const tasksCount = project.tasks_count || 0;
+                // Dummy logic for table view status
                 const percentage = tasksCount === 0 ? 0 : Math.round((Math.floor(tasksCount * 0.6) / tasksCount) * 100);
-                const statusLabel = percentage >= 70 ? 'On Track' : percentage >= 40 ? 'At Risk' : 'Behind';
+                const statusLabelKey = percentage >= 70 ? 'project.onTrack' : percentage >= 40 ? 'project.atRisk' : 'project.behind';
                 const statusClass = percentage >= 70 ? 'status-on-track' : percentage >= 40 ? 'status-at-risk' : 'status-behind';
                 
                 return (
@@ -110,7 +114,7 @@ export function ProjectTable({ projects, onProjectSelect }: ProjectTableProps) {
                     </TableCell>
                     <TableCell className="text-center px-4">
                       <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${statusClass}`}>
-                        {statusLabel}
+                        {t(statusLabelKey)}
                       </span>
                     </TableCell>
                   </TableRow>

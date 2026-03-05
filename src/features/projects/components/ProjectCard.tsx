@@ -3,6 +3,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { CheckCircle2, Users, Folder, Clock } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface ProjectCardProps {
   project: Project;
@@ -13,37 +14,36 @@ function getStatusInfo(tasksCount: number, completedTasksCount: number) {
   const percentage = tasksCount === 0 ? 0 : Math.round((completed / tasksCount) * 100);
   
   let status: 'on-track' | 'at-risk' | 'behind';
-  let label: string;
+  let labelKey: string;
   let cssClass: string;
   
   if (percentage >= 70) {
     status = 'on-track';
-    label = 'On Track';
+    labelKey = 'project.onTrack';
     cssClass = 'status-on-track';
   } else if (percentage >= 40) {
     status = 'at-risk';
-    label = 'At Risk';
+    labelKey = 'project.atRisk';
     cssClass = 'status-at-risk';
   } else {
     status = 'behind';
-    label = 'Behind';
+    labelKey = 'project.behind';
     cssClass = 'status-behind';
   }
   
-  return { completed, percentage, status, label, cssClass };
-}
-
-function getTimeAgo() {
-  const hours = [1, 2, 3, 5, 8, 12];
-  const h = hours[Math.floor(Math.random() * hours.length)];
-  return `Updated ${h}h ago`;
+  return { completed, percentage, status, labelKey, cssClass };
 }
 
 export function ProjectCard({ project }: ProjectCardProps) {
+  const { t } = useTranslation();
   const tasksCount = project.tasks_count || 0;
   const completedTasksCount = project.completed_tasks_count || 0;
-  const { completed, percentage, label, cssClass } = getStatusInfo(tasksCount, completedTasksCount);
-  const timeAgo = getTimeAgo();
+  const { completed, percentage, labelKey, cssClass } = getStatusInfo(tasksCount, completedTasksCount);
+  
+  // Simulation since backend doesn't provide updated_at yet
+  const hours = [1, 2, 3, 5, 8, 12];
+  const h = hours[Math.floor(Math.random() * hours.length)];
+  const timeAgo = t('project.updatedAgo', { h });
 
   return (
     <Card className="rounded-xl card-hover-glow bg-card cursor-pointer overflow-hidden group relative">
@@ -52,7 +52,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
               <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${cssClass}`}>
-                {label}
+                {t(labelKey)}
               </span>
             </div>
             <CardTitle className="leading-tight text-[15px] font-semibold text-foreground group-hover:text-primary transition-colors duration-200 truncate">
@@ -79,7 +79,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
         {/* Progress bar */}
         <div className="space-y-1.5">
           <div className="flex items-center justify-between text-[11px]">
-            <span className="text-muted-foreground font-medium">Progress</span>
+            <span className="text-muted-foreground font-medium">{t('project.progress')}</span>
             <span className="text-foreground font-semibold">{percentage}%</span>
           </div>
           <div className="h-1.5 w-full rounded-full bg-secondary overflow-hidden">
@@ -94,11 +94,11 @@ export function ProjectCard({ project }: ProjectCardProps) {
         <div className="flex items-center gap-4 text-[12px] text-muted-foreground">
           <div className="flex items-center gap-1.5">
             <CheckCircle2 className="h-3.5 w-3.5" style={{ color: 'var(--status-done)' }} />
-            <span>{completed}/{tasksCount} tasks</span>
+            <span>{completed}/{tasksCount} {t('project.tasks')}</span>
           </div>
           <div className="flex items-center gap-1.5">
             <Users className="h-3.5 w-3.5" />
-            <span>{project.collaborators.length + 1} members</span>
+            <span>{project.collaborators.length + 1} {t('project.members')}</span>
           </div>
         </div>
       </CardContent>

@@ -25,6 +25,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { format } from 'date-fns';
 
+import { useTranslation } from 'react-i18next';
+
 export function Issues() {
   const { selectedProject } = useAppStore();
   const [issues, setIssues] = useState<Issue[]>([]);
@@ -32,6 +34,7 @@ export function Issues() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const { t } = useTranslation();
 
   const fetchData = useCallback(async () => {
     if (!selectedProject?.id) return;
@@ -55,7 +58,7 @@ export function Issues() {
   }, [fetchData]);
 
   const handleDeleteIssue = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this issue?')) return;
+    if (!confirm(t('issues.deleteConfirm'))) return;
     try {
       await issuesApi.deleteIssue(id);
       fetchData();
@@ -82,7 +85,7 @@ export function Issues() {
 
   // Lookup task title efficiently
   const getTaskTitle = (taskId: number) => {
-    return tasks.find(t => t.id === taskId)?.title || 'Unknown Task';
+    return tasks.find(t => t.id === taskId)?.title || t('issues.unknownTask');
   };
 
   if (!selectedProject) return null;
@@ -93,14 +96,14 @@ export function Issues() {
       <div className="flex-none px-6 pb-4">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-2 min-w-0">
-            <h1 className="text-xl font-semibold tracking-tight truncate">Issues</h1>
+            <h1 className="text-xl font-semibold tracking-tight truncate">{t('issues.title')}</h1>
             <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20 rounded-md px-2 py-0.5 font-medium shrink-0">
               {issues.length}
             </Badge>
           </div>
           <Button onClick={() => setIsCreateDialogOpen(true)} className="shrink-0 h-9 px-4 shadow-sm">
             <Plus className="h-4 w-4 mr-2" />
-            Report Issue
+            {t('issues.reportIssue')}
           </Button>
         </div>
       </div>
@@ -112,7 +115,7 @@ export function Issues() {
             <div className="relative w-full sm:max-w-xs">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search issues..."
+                placeholder={t('issues.search')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-9 h-9 bg-background border-border"
@@ -122,20 +125,20 @@ export function Issues() {
 
           {/* List Content */}
           {loading ? (
-            <div className="text-center py-12 text-muted-foreground">Loading issues...</div>
+            <div className="text-center py-12 text-muted-foreground">{t('issues.loading')}</div>
           ) : filteredIssues.length === 0 ? (
             <div className="text-center py-16 bg-card border border-border rounded-xl shadow-sm">
               <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 mb-4">
                 <Bug className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="text-lg font-medium text-foreground mb-1">No issues found</h3>
+              <h3 className="text-lg font-medium text-foreground mb-1">{t('issues.noIssues')}</h3>
               <p className="text-sm text-muted-foreground mb-6 max-w-[250px] mx-auto">
-                {searchQuery ? "No issues match your search criteria." : "There are no issues reported for this project yet."}
+                {searchQuery ? t('issues.noSearchMatch') : t('issues.noIssuesDescription')}
               </p>
               {!searchQuery && (
                 <Button onClick={() => setIsCreateDialogOpen(true)}>
                   <Plus className="h-4 w-4 mr-2" />
-                  Report First Issue
+                  {t('issues.reportFirst')}
                 </Button>
               )}
             </div>
@@ -166,7 +169,7 @@ export function Issues() {
                           <span className="truncate max-w-[200px]">{getTaskTitle(issue.task)}</span>
                         </div>
                         <div className="flex items-center gap-1.5">
-                          <span>Reported on {format(new Date(issue.created_at), 'MMM d, yyyy')}</span>
+                          <span>{t('issues.reportedOn', { date: format(new Date(issue.created_at), 'MMM d, yyyy') })}</span>
                         </div>
                       </div>
                     </div>
@@ -179,16 +182,16 @@ export function Issues() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-[160px]">
-                          <DropdownMenuItem onClick={() => handleUpdateStatus(issue.id, 'open')}>Mark as Open</DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleUpdateStatus(issue.id, 'resolved')}>Mark as Resolved</DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleUpdateStatus(issue.id, 'closed')}>Mark as Closed</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleUpdateStatus(issue.id, 'open')}>{t('issues.markOpen')}</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleUpdateStatus(issue.id, 'resolved')}>{t('issues.markResolved')}</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleUpdateStatus(issue.id, 'closed')}>{t('issues.markClosed')}</DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem 
                             onClick={() => handleDeleteIssue(issue.id)}
                             className="text-destructive focus:text-destructive focus:bg-destructive/10"
                           >
                             <Trash2 className="h-4 w-4 mr-2" />
-                            Delete Issue
+                            {t('issues.deleteIssue')}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>

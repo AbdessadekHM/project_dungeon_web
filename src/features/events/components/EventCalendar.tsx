@@ -12,6 +12,8 @@ interface EventCalendarProps {
   onSelectEvent?: (event: CalendarEvent) => void;
 }
 
+import { useTranslation } from 'react-i18next';
+
 export const EventCalendar: React.FC<EventCalendarProps> = ({ 
   events, 
   onSelectSlot, 
@@ -19,6 +21,7 @@ export const EventCalendar: React.FC<EventCalendarProps> = ({
 }) => {
   const [view, setView] = React.useState<any>(Views.MONTH);
   const [date, setDate] = React.useState<Date>(new Date());
+  const { t } = useTranslation();
 
   // Convert ISO dates to Date objects for react-big-calendar
   const formattedEvents = events.map(event => ({
@@ -50,13 +53,13 @@ export const EventCalendar: React.FC<EventCalendarProps> = ({
         })}
         popup
         messages={{
-          next: "Next",
-          previous: "Previous",
-          today: "Today",
-          month: "Month",
-          week: "Week",
-          day: "Day",
-          agenda: "Agenda",
+          next: t('events.next'),
+          previous: t('events.previous'),
+          today: t('events.today'),
+          month: t('events.month'),
+          week: t('events.week'),
+          day: t('events.day'),
+          agenda: t('events.agenda'),
         }}
       />
     </div>

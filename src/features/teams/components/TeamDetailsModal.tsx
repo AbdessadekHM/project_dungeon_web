@@ -19,9 +19,12 @@ interface TeamDetailsModalProps {
   onEditClick: () => void;
 }
 
+import { useTranslation } from 'react-i18next';
+
 export function TeamDetailsModal({ team, open, onOpenChange, allUsers, allProjects, onEditClick }: TeamDetailsModalProps) {
   const { setSelectedProject } = useAppStore();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   if (!team) return null;
 
@@ -50,7 +53,7 @@ export function TeamDetailsModal({ team, open, onOpenChange, allUsers, allProjec
             </div>
             <Button variant="outline" size="sm" onClick={onEditClick} className="gap-2 shrink-0 text-[13px] border-border">
               <Edit className="h-3.5 w-3.5" />
-              Edit Team
+              {t('teams.editTeam')}
             </Button>
           </div>
         </div>
@@ -62,7 +65,7 @@ export function TeamDetailsModal({ team, open, onOpenChange, allUsers, allProjec
           <div className="space-y-4">
             <div className="flex items-center gap-2 border-b border-border pb-2">
               <Users className="h-4 w-4 text-primary" />
-              <h3 className="text-[13px] font-semibold tracking-tight">Team Members</h3>
+              <h3 className="text-[13px] font-semibold tracking-tight">{t('teams.teamMembers')}</h3>
               <Badge variant="secondary" className="ml-2 font-mono text-[11px]">{team.collaborators.length + 1}</Badge>
             </div>
             
@@ -74,10 +77,10 @@ export function TeamDetailsModal({ team, open, onOpenChange, allUsers, allProjec
                  </Avatar>
                  <div className="flex flex-col">
                    <div className="flex items-center gap-2">
-                     <span className="font-medium text-[13px]">{owner?.username || `User #${team.owner}`}</span>
+                     <span className="font-medium text-[13px]">{owner?.username || t('teams.userNumber', { id: team.owner })}</span>
                      <ShieldUser className="h-3.5 w-3.5 text-primary" />
                    </div>
-                   <span className="text-[11px] text-muted-foreground">{owner?.email || 'Owner'}</span>
+                   <span className="text-[11px] text-muted-foreground">{owner?.email || t('teams.owner')}</span>
                  </div>
               </div>
 
@@ -92,8 +95,8 @@ export function TeamDetailsModal({ team, open, onOpenChange, allUsers, allProjec
                         </AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col">
-                      <span className="font-medium text-[13px]">{c?.username || `User #${userId}`}</span>
-                      <span className="text-[11px] text-muted-foreground">{c?.email || 'Collaborator'}</span>
+                      <span className="font-medium text-[13px]">{c?.username || t('teams.userNumber', { id: userId })}</span>
+                      <span className="text-[11px] text-muted-foreground">{c?.email || t('teams.collaboratorLabel')}</span>
                     </div>
                   </div>
                 );
@@ -104,13 +107,13 @@ export function TeamDetailsModal({ team, open, onOpenChange, allUsers, allProjec
           {/* Projects Section */}
           <div className="space-y-4">
             <div className="flex items-center gap-2 border-b border-border pb-2">
-              <h3 className="text-[13px] font-semibold tracking-tight">Contributing Projects</h3>
+              <h3 className="text-[13px] font-semibold tracking-tight">{t('teams.contributingProjects')}</h3>
               <Badge variant="secondary" className="ml-2 font-mono text-[11px]">{teamProjects.length}</Badge>
             </div>
             
             {teamProjects.length === 0 ? (
               <div className="text-center p-8 rounded-lg border border-dashed border-border bg-secondary/10">
-                <p className="text-muted-foreground text-[13px]">This team is not currently assigned to any projects.</p>
+                <p className="text-muted-foreground text-[13px]">{t('teams.noProjectsAssigned')}</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

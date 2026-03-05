@@ -12,8 +12,11 @@ interface TaskKanbanBoardProps {
   onTaskClick?: (task: Task) => void;
 }
 
+import { useTranslation } from 'react-i18next';
+
 export function TaskKanbanBoard({ tasks: initialTasks, users, onTaskClick }: TaskKanbanBoardProps) {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  const { t } = useTranslation();
 
   useEffect(() => {
     setTasks(initialTasks);
@@ -50,21 +53,21 @@ export function TaskKanbanBoard({ tasks: initialTasks, users, onTaskClick }: Tas
   const columns = [
     {
       id: 'todo',
-      title: 'To Do',
+      title: t('tasks.todo'),
       dotColor: 'var(--status-todo)',
       bgClass: 'bg-[var(--status-todo-bg)]',
       tasks: tasks.filter(t => t.status === 'todo')
     },
     {
       id: 'in_progress',
-      title: 'In Progress',
+      title: t('tasks.inProgress'),
       dotColor: 'var(--status-progress)',
       bgClass: 'bg-[var(--status-progress-bg)]',
       tasks: tasks.filter(t => t.status === 'in_progress')
     },
     {
       id: 'finished',
-      title: 'Finished',
+      title: t('tasks.finished'),
       dotColor: 'var(--status-done)',
       bgClass: 'bg-[var(--status-done-bg)]',
       tasks: tasks.filter(t => t.status === 'finished')
@@ -95,7 +98,7 @@ export function TaskKanbanBoard({ tasks: initialTasks, users, onTaskClick }: Tas
                 >
                   {column.tasks.length === 0 ? (
                     <div className="h-32 border-2 border-dashed border-border/50 rounded-xl flex items-center justify-center text-muted-foreground text-[13px]">
-                      No tasks
+                      {t('tasks.noTasksKanban')}
                     </div>
                   ) : (
                     column.tasks.map((task, index) => (

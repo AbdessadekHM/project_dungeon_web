@@ -1,18 +1,21 @@
 import { BarChart3, Users, Folder, Activity } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export function AdminDashboard() {
+  const { t } = useTranslation();
+  
   const stats = [
-    { label: 'Total Projects', value: '—', icon: Folder, color: 'text-primary' },
-    { label: 'Total Teams', value: '—', icon: Users, color: 'text-emerald-500' },
-    { label: 'Total Users', value: '—', icon: Users, color: 'text-amber-500' },
-    { label: 'Active Tasks', value: '—', icon: BarChart3, color: 'text-rose-500' },
+    { label: t('admin.totalProjects'), value: '—', icon: Folder, color: 'text-primary' },
+    { label: t('admin.totalTeams'), value: '—', icon: Users, color: 'text-emerald-500' },
+    { label: t('admin.totalUsers'), value: '—', icon: Users, color: 'text-amber-500' },
+    { label: t('admin.activeTasks'), value: '—', icon: BarChart3, color: 'text-rose-500' },
   ];
 
   return (
     <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-red-400">Admin Dashboard</h1>
-        <p className="text-muted-foreground mt-1 text-sm">Overview of system metrics and health.</p>
+        <h1 className="text-2xl font-bold tracking-tight text-red-400">{t('admin.dashboard')}</h1>
+        <p className="text-muted-foreground mt-1 text-sm">{t('admin.metricsOverview')}</p>
       </div>
 
       {/* Stats Grid */}
@@ -32,10 +35,10 @@ export function AdminDashboard() {
       <div>
         <div className="flex items-center gap-2 mb-4">
           <Activity className="h-4 w-4 text-muted-foreground" />
-          <h2 className="text-sm font-semibold text-foreground">System Activity</h2>
+          <h2 className="text-sm font-semibold text-foreground">{t('admin.systemActivity')}</h2>
         </div>
         <div className="rounded-xl border border-border bg-card/30 p-8 text-center">
-          <p className="text-muted-foreground text-sm">Admin dashboard metrics coming soon...</p>
+          <p className="text-muted-foreground text-sm">{t('admin.comingSoon')}</p>
         </div>
       </div>
     </div>

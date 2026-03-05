@@ -17,8 +17,11 @@ interface TeamTableProps {
   onTeamSelect: (team: Team) => void;
 }
 
+import { useTranslation } from 'react-i18next';
+
 export function TeamTable({ teams, onTeamSelect }: TeamTableProps) {
   const [searchQuery, setSearchQuery] = useState('');
+  const { t } = useTranslation();
 
   const filteredTeams = useMemo(() => {
     return teams.filter(team => {
@@ -36,7 +39,7 @@ export function TeamTable({ teams, onTeamSelect }: TeamTableProps) {
           <div className="relative w-[150px] lg:w-[250px]">
             <Search className="absolute left-2.5 top-2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Filter teams..."
+              placeholder={t('teams.filterTeams')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="h-8 text-[13px] pl-8 bg-card border-border focus-visible:ring-1 focus-visible:ring-primary rounded-lg"
@@ -48,7 +51,7 @@ export function TeamTable({ teams, onTeamSelect }: TeamTableProps) {
               onClick={() => setSearchQuery('')}
               className="h-8 px-2 text-muted-foreground text-[13px]"
             >
-              Reset
+              {t('common.reset')}
             </Button>
           )}
         </div>
@@ -59,17 +62,17 @@ export function TeamTable({ teams, onTeamSelect }: TeamTableProps) {
         <Table>
           <TableHeader>
             <TableRow className="border-border bg-secondary/30 hover:bg-secondary/30">
-              <TableHead className="w-[300px] text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2">Team Name</TableHead>
-              <TableHead className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2">Owner ID</TableHead>
-              <TableHead className="w-[100px] text-center text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2">Projects</TableHead>
-              <TableHead className="w-[100px] text-center text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2">Members</TableHead>
+              <TableHead className="w-[300px] text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2">{t('teams.teamNameColumn')}</TableHead>
+              <TableHead className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2">{t('teams.ownerIdColumn')}</TableHead>
+              <TableHead className="w-[100px] text-center text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2">{t('common.projectsColumn')}</TableHead>
+              <TableHead className="w-[100px] text-center text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2">{t('common.membersColumn')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredTeams.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={4} className="h-24 text-center text-muted-foreground text-[13px]">
-                  No teams found.
+                  {t('teams.noTeamsFound')}
                 </TableCell>
               </TableRow>
             ) : (

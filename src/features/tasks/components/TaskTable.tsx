@@ -44,12 +44,15 @@ interface DataTableProps {
   onTaskClick?: (task: Task) => void;
 }
 
+import { useTranslation } from 'react-i18next';
+
 export function TaskTable({ tasks, onTaskUpdate, onTaskClick }: DataTableProps) {
   const { user } = useAuthStore();
   const { selectedProject } = useAppStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string[]>([]);
   const [priorityFilter, setPriorityFilter] = useState<string[]>([]);
+  const { t } = useTranslation();
 
   const filteredTasks = useMemo(() => {
     return tasks.filter(task => {
@@ -80,7 +83,7 @@ export function TaskTable({ tasks, onTaskUpdate, onTaskClick }: DataTableProps) 
           <div className="relative w-[150px] lg:w-[250px]">
             <Search className="absolute left-2.5 top-2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Filter tasks..."
+              placeholder={t('tasks.filterTasks')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="h-8 text-[13px] pl-8 bg-card border-border focus-visible:ring-1 focus-visible:ring-primary"
@@ -91,7 +94,7 @@ export function TaskTable({ tasks, onTaskUpdate, onTaskClick }: DataTableProps) 
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm" className="h-8 border-dashed border-border text-[13px]">
                 <PlusCircle className="mr-2 h-3.5 w-3.5" />
-                Status
+                {t('tasks.statusColumn')}
                 {statusFilter.length > 0 && (
                   <Badge variant="secondary" className="ml-2 rounded-sm px-1 font-normal text-[11px]">
                     {statusFilter.length}
@@ -100,7 +103,7 @@ export function TaskTable({ tasks, onTaskUpdate, onTaskClick }: DataTableProps) 
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-[150px] border-border">
-              <DropdownMenuLabel className="text-[11px] uppercase tracking-wide text-muted-foreground">Filter by status</DropdownMenuLabel>
+              <DropdownMenuLabel className="text-[11px] uppercase tracking-wide text-muted-foreground">{t('tasks.filterByStatus')}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               {['todo', 'in_progress', 'finished'].map(val => (
                 <DropdownMenuCheckboxItem
@@ -121,7 +124,7 @@ export function TaskTable({ tasks, onTaskUpdate, onTaskClick }: DataTableProps) 
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm" className="h-8 border-dashed border-border text-[13px]">
                 <PlusCircle className="mr-2 h-3.5 w-3.5" />
-                Priority
+                {t('tasks.priorityColumn')}
                 {priorityFilter.length > 0 && (
                   <Badge variant="secondary" className="ml-2 rounded-sm px-1 font-normal text-[11px]">
                     {priorityFilter.length}
@@ -130,7 +133,7 @@ export function TaskTable({ tasks, onTaskUpdate, onTaskClick }: DataTableProps) 
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-[150px] border-border">
-              <DropdownMenuLabel className="text-[11px] uppercase tracking-wide text-muted-foreground">Filter by priority</DropdownMenuLabel>
+              <DropdownMenuLabel className="text-[11px] uppercase tracking-wide text-muted-foreground">{t('tasks.filterByPriority')}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               {['low', 'medium', 'high'].map(val => (
                 <DropdownMenuCheckboxItem
@@ -153,7 +156,7 @@ export function TaskTable({ tasks, onTaskUpdate, onTaskClick }: DataTableProps) 
               onClick={() => { setStatusFilter([]); setPriorityFilter([]); setSearchQuery(''); }}
               className="h-8 px-2 text-muted-foreground text-[13px]"
             >
-              Reset
+              {t('common.reset')}
             </Button>
           )}
         </div>
@@ -164,11 +167,11 @@ export function TaskTable({ tasks, onTaskUpdate, onTaskClick }: DataTableProps) 
         <Table>
           <TableHeader>
             <TableRow className="border-border bg-secondary/30 hover:bg-secondary/30">
-              <TableHead className="w-[90px] text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2">Task</TableHead>
-              <TableHead className="min-w-[300px] text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2">Title</TableHead>
-              <TableHead className="min-w-[300px] text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2">Type</TableHead>
-              <TableHead className="w-[150px] text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2">Status</TableHead>
-              <TableHead className="w-[120px] text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2">Priority</TableHead>
+              <TableHead className="w-[90px] text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2">{t('tasks.taskColumn')}</TableHead>
+              <TableHead className="min-w-[300px] text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2">{t('tasks.titleColumn')}</TableHead>
+              <TableHead className="min-w-[300px] text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2">{t('tasks.typeColumn')}</TableHead>
+              <TableHead className="w-[150px] text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2">{t('tasks.statusColumn')}</TableHead>
+              <TableHead className="w-[120px] text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2">{t('tasks.priorityColumn')}</TableHead>
               <TableHead className="w-[50px] px-4 py-2"></TableHead>
             </TableRow>
           </TableHeader>
@@ -176,7 +179,7 @@ export function TaskTable({ tasks, onTaskUpdate, onTaskClick }: DataTableProps) 
             {filteredTasks.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={5} className="h-24 text-center text-muted-foreground text-[13px]">
-                  No tasks found.
+                  {t('tasks.noTasksFound')}
                 </TableCell>
               </TableRow>
             ) : (
@@ -236,10 +239,10 @@ export function TaskTable({ tasks, onTaskUpdate, onTaskClick }: DataTableProps) 
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="border-border">
-                          <DropdownMenuLabel className="text-[11px] uppercase tracking-wide text-muted-foreground">Actions</DropdownMenuLabel>
-                          <DropdownMenuItem onClick={() => onTaskClick?.(task)} className="text-[13px] cursor-pointer">Edit Task</DropdownMenuItem>
+                          <DropdownMenuLabel className="text-[11px] uppercase tracking-wide text-muted-foreground">{t('tasks.actions')}</DropdownMenuLabel>
+                          <DropdownMenuItem onClick={() => onTaskClick?.(task)} className="text-[13px] cursor-pointer">{t('tasks.editTask')}</DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-destructive text-[13px] cursor-pointer">Delete Task</DropdownMenuItem>
+                          <DropdownMenuItem className="text-destructive text-[13px] cursor-pointer">{t('tasks.deleteTask')}</DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     )}

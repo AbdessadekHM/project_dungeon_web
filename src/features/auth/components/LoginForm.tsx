@@ -34,7 +34,20 @@ interface LoginFormProps {
   onSuccess: () => void;
 }
 
+import { useTranslation } from "react-i18next"
+
 export function LoginForm({ onSuccess }: LoginFormProps) {
+  const { t } = useTranslation()
+
+  const loginSchema = z.object({
+    username: z.string().min(1, {
+      message: t("auth.usernameRequired"),
+    }),
+    password: z.string().min(1, {
+      message: t("auth.passwordRequired"),
+    }),
+  })
+
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -57,9 +70,9 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
       console.error("Login failed:", error)
       const message = error.response?.data?.detail 
         || error.response?.data?.error 
-        || "Invalid credentials or server error. Please try again."
+        || t("auth.loginErrorGeneric")
         
-      toast.error('Login Failed', {
+      toast.error(t("auth.loginFailed"), {
         description: message,
       })
     }
@@ -75,9 +88,9 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[13px]">Username or Email</FormLabel>
+                  <FormLabel className="text-[13px]">{t("auth.usernameOrEmail")}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter username or email" className="bg-secondary/30 border-border text-[13px]" {...field} />
+                    <Input placeholder={t("auth.usernamePlaceholder")} className="bg-secondary/30 border-border text-[13px]" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -89,9 +102,9 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <div className="flex items-center justify-between">
-                    <FormLabel className="text-[13px]">Password</FormLabel>
+                    <FormLabel className="text-[13px]">{t("auth.password")}</FormLabel>
                     <Link to="#" className="text-[12px] font-medium text-primary hover:underline">
-                      Forgot password?
+                      {t("auth.forgotPassword")}
                     </Link>
                   </div>
                   <FormControl>
@@ -111,14 +124,14 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
               )}
               disabled={form.formState.isSubmitting}
             >
-              {form.formState.isSubmitting ? "Logging in..." : "Log In"}
+              {form.formState.isSubmitting ? t("auth.loggingIn") : t("auth.login")}
             </Button>
             
           </form>
         </Form>
         <div className="text-center mt-6">
           <Link to="/register" className="text-[13px] font-medium text-primary hover:underline">
-            Don't have an account? Sign up
+            {t("auth.alreadyHaveAccount")} {t("auth.signUp")}
           </Link>
         </div>
       </CardContent>

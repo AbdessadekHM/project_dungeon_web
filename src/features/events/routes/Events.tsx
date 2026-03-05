@@ -11,6 +11,8 @@ import { EventDetailDialog } from '@/features/events/components/EventDetailDialo
 import { calendarApi } from '@/features/events/api/calendarApi';
 import type { CalendarEvent } from '@/features/events/types';
 
+import { useTranslation } from 'react-i18next';
+
 export function Events() {
   const { user } = useAuthStore();
   const { selectedProject } = useAppStore();
@@ -21,6 +23,7 @@ export function Events() {
   const [selectedSlot, setSelectedSlot] = useState<{ start: Date; end: Date } | null>(null);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
+  const { t } = useTranslation();
 
   const fetchEvents = useCallback(async () => {
     if (!selectedProject?.id) return;
@@ -96,7 +99,7 @@ export function Events() {
   if (!selectedProject) {
     return (
       <div className="p-8 text-center bg-card rounded-2xl border border-dashed border-border mt-8">
-        <p className="text-muted-foreground">Please select a project to view events.</p>
+        <p className="text-muted-foreground">{t('events.selectProject')}</p>
       </div>
     );
   }
@@ -105,8 +108,8 @@ export function Events() {
     <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">Events & Calendar</h1>
-          <p className="text-muted-foreground mt-1 text-sm">Sync your project with Google Calendar and schedule meetings.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">{t('events.title')}</h1>
+          <p className="text-muted-foreground mt-1 text-sm">{t('events.description')}</p>
         </div>
         
         {(user?.role === 'admin' || user?.id === selectedProject?.owner) && (
@@ -122,7 +125,7 @@ export function Events() {
             )}
           >
             <Plus className="h-4 w-4" />
-            Create Event
+            {t('events.createEvent')}
           </Button>
         )}
       </div>

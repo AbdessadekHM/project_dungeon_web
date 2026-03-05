@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import type { User } from '@/features/projects/types';
+import { useTranslation } from 'react-i18next';
 
 interface UserTableProps {
   users: User[];
@@ -29,6 +30,7 @@ interface UserTableProps {
 }
 
 export function UserTable({ users, onUserSelect, onEditRole, onDeleteUser }: UserTableProps) {
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredUsers = useMemo(() => {
@@ -48,7 +50,7 @@ export function UserTable({ users, onUserSelect, onEditRole, onDeleteUser }: Use
           <div className="relative w-[200px] lg:w-[300px]">
             <Search className="absolute left-2.5 top-2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search by username, email..."
+              placeholder={t('auth.usernamePlaceholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="h-8 text-[13px] pl-8 bg-card border-border focus-visible:ring-1 focus-visible:ring-primary"
@@ -60,7 +62,7 @@ export function UserTable({ users, onUserSelect, onEditRole, onDeleteUser }: Use
               onClick={() => setSearchQuery('')}
               className="h-8 px-2 text-muted-foreground text-[13px]"
             >
-              Reset
+              {t('common.reset')}
             </Button>
           )}
         </div>
@@ -71,9 +73,9 @@ export function UserTable({ users, onUserSelect, onEditRole, onDeleteUser }: Use
         <Table>
           <TableHeader>
             <TableRow className="border-border bg-secondary/30 hover:bg-secondary/30">
-              <TableHead className="w-[300px] text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2">User</TableHead>
-              <TableHead className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2">Contact</TableHead>
-              <TableHead className="w-[150px] text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2">Role</TableHead>
+              <TableHead className="w-[300px] text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2">{t('admin.userTable.user')}</TableHead>
+              <TableHead className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2">{t('admin.userTable.contact')}</TableHead>
+              <TableHead className="w-[150px] text-[11px] uppercase tracking-wide text-muted-foreground font-semibold px-4 py-2">{t('admin.userTable.role')}</TableHead>
               <TableHead className="w-[50px] px-4 py-2"></TableHead>
             </TableRow>
           </TableHeader>
@@ -81,14 +83,14 @@ export function UserTable({ users, onUserSelect, onEditRole, onDeleteUser }: Use
             {filteredUsers.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={4} className="h-24 text-center text-muted-foreground text-[13px]">
-                  No users found.
+                  {t('common.noData')}
                 </TableCell>
               </TableRow>
             ) : (
               filteredUsers.map((user) => (
                 <TableRow 
-                  key={user.id} 
-                  className="group border-border hover:bg-secondary/50 transition-colors duration-150 relative"
+                   key={user.id} 
+                   className="group border-border hover:bg-secondary/50 transition-colors duration-150 relative"
                 >
                   <TableCell className="px-4" onClick={() => onUserSelect?.(user)}>
                     <div className="flex items-center gap-3 cursor-pointer">
@@ -114,18 +116,18 @@ export function UserTable({ users, onUserSelect, onEditRole, onDeleteUser }: Use
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="h-7 w-7 p-0 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
-                          <span className="sr-only">Open menu</span>
-                          <MoreHorizontal className="h-4 w-4" />
+                          <span className="sr-only">{t('common.toggleMenu')}</span>
+                          < MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="border-border">
-                        <DropdownMenuLabel className="text-[11px] uppercase tracking-wide text-muted-foreground">Actions</DropdownMenuLabel>
+                        <DropdownMenuLabel className="text-[11px] uppercase tracking-wide text-muted-foreground">{t('tasks.actions')}</DropdownMenuLabel>
                         <DropdownMenuItem onClick={() => onEditRole?.(user)} className="text-[13px] cursor-pointer">
-                          Edit Role
+                          {t('admin.editRole')}
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => onDeleteUser?.(user)} className="text-destructive text-[13px] cursor-pointer">
-                          Delete User
+                          {t('admin.deleteUser')}
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>

@@ -11,12 +11,15 @@ import { TeamDetailsModal } from '../components/TeamDetailsModal';
 import { TeamTable } from '../components/TeamTable';
 import { adminApi } from '@/features/admin/api';
 
+import { useTranslation } from 'react-i18next';
+
 export function Teams() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [teams, setTeams] = useState<Team[]>([]);
   const [allUsers, setAllUsers] = useState<User[]>([]);
   const [allProjects, setAllProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { t } = useTranslation();
 
   // Modal states
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -55,8 +58,8 @@ export function Teams() {
     <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">Teams</h1>
-          <p className="text-muted-foreground mt-1 text-sm">Organize collaborators and manage project access.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">{t('teams.title')}</h1>
+          <p className="text-muted-foreground mt-1 text-sm">{t('teams.description')}</p>
         </div>
         <div className="flex items-center gap-2">
           {/* View Toggle */}
@@ -95,11 +98,11 @@ export function Teams() {
               "h-8 rounded-lg text-[13px] font-medium gap-1.5 px-4",
               "bg-linear-to-br from-indigo-500 to-violet-600 text-white",
               "hover:brightness-110 hover:shadow-glow-indigo",
-              "transition-all duration-200"
+              "transition-all duration-150"
             )}
           >
             <Plus className="h-3.5 w-3.5" />
-            Create Team
+            {t('teams.createTeam')}
           </Button>
         </div>
       </div>
@@ -107,16 +110,16 @@ export function Teams() {
       {isLoading ? (
         <div className="flex flex-col items-center justify-center p-16 gap-3">
           <div className="h-8 w-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
-          <p className="text-muted-foreground text-sm">Loading teams...</p>
+          <p className="text-muted-foreground text-sm">{t('teams.loadingTeams')}</p>
         </div>
       ) : teams.length === 0 ? (
         <div className="text-center py-20 px-8 border border-dashed border-border rounded-xl bg-card/50">
           <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-5">
             <UsersIcon className="h-8 w-8 text-primary" />
           </div>
-          <h3 className="text-lg font-semibold text-foreground mb-2">No teams yet</h3>
+          <h3 className="text-lg font-semibold text-foreground mb-2">{t('teams.noTeams')}</h3>
           <p className="text-muted-foreground text-sm mb-6 max-w-sm mx-auto">
-            Create your first team to start collaborating with others.
+            {t('teams.noTeamsDescription')}
           </p>
           <Button 
             onClick={() => setIsCreateModalOpen(true)} 
@@ -128,7 +131,7 @@ export function Teams() {
             )}
           >
             <Plus className="h-4 w-4" />
-            Create your first team
+            {t('teams.createFirstTeam')}
           </Button>
         </div>
       ) : viewMode === 'grid' ? (

@@ -35,7 +35,23 @@ interface RegisterFormProps {
   onSuccess: () => void;
 }
 
+import { useTranslation } from "react-i18next"
+
 export function RegisterForm({ onSuccess }: RegisterFormProps) {
+  const { t } = useTranslation()
+
+  const registerSchema = z.object({
+    username: z.string().min(3, t("auth.usernameMin")),
+    email: z.string().email(t("auth.emailInvalid")),
+    phone: z.string().min(5, t("auth.phoneRequired")),
+    password: z.string().min(6, t("auth.passwordMin")),
+    confirmPassword: z.string().min(6, t("auth.confirmPasswordRequired")),
+    birth_date: z.string(),
+  }).refine((data) => data.password === data.confirmPassword, {
+    message: t("auth.passwordsMatch"),
+    path: ["confirmPassword"],
+  })
+
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -53,10 +69,10 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
 
     try{
       await axios.post(import.meta.env.VITE_API_URL + "/account/register/", data)
-      toast.success("Registeration successfull")
+      toast.success(t("auth.registrationSuccessful"))
       onSuccess()
     } catch (error) {
-      toast.error("Registeration failed")
+      toast.error(t("auth.registrationFailed"))
     }
   }
 
@@ -70,7 +86,7 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[13px]">Username</FormLabel>
+                  <FormLabel className="text-[13px]">{t("auth.username")}</FormLabel>
                   <FormControl>
                     <Input placeholder="johndoe" className="bg-secondary/30 border-border text-[13px]" {...field} />
                   </FormControl>
@@ -84,7 +100,7 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[13px]">Email</FormLabel>
+                  <FormLabel className="text-[13px]">{t("auth.email")}</FormLabel>
                   <FormControl>
                     <Input type="email" placeholder="john@example.com" className="bg-secondary/30 border-border text-[13px]" {...field} />
                   </FormControl>
@@ -98,7 +114,7 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
               name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[13px]">Phone Number</FormLabel>
+                  <FormLabel className="text-[13px]">{t("auth.phone")}</FormLabel>
                   <FormControl>
                     <Input placeholder="+1234567890" className="bg-secondary/30 border-border text-[13px]" {...field} />
                   </FormControl>
@@ -112,7 +128,7 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[13px]">Password</FormLabel>
+                  <FormLabel className="text-[13px]">{t("auth.password")}</FormLabel>
                   <FormControl>
                     <Input type="password" placeholder="••••••••" className="bg-secondary/30 border-border text-[13px]" {...field} />
                   </FormControl>
@@ -126,7 +142,7 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
               name="confirmPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[13px]">Confirm Password</FormLabel>
+                  <FormLabel className="text-[13px]">{t("auth.confirmPassword")}</FormLabel>
                   <FormControl>
                     <Input type="password" placeholder="••••••••" className="bg-secondary/30 border-border text-[13px]" {...field} />
                   </FormControl>
@@ -140,9 +156,9 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
               name="birth_date"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[13px]">Birth Date</FormLabel>
+                  <FormLabel className="text-[13px]">{t("auth.birthDate")}</FormLabel>
                   <FormControl>
-                    <Input type="date" placeholder="Birth Date" className="bg-secondary/30 border-border text-[13px]" {...field}  />
+                    <Input type="date" placeholder={t("auth.birthDate")} className="bg-secondary/30 border-border text-[13px]" {...field}  />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -159,14 +175,14 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
                 "transition-all duration-150"
               )}
             >
-              Create Account
+              {form.formState.isSubmitting ? t("auth.registering") : t("auth.createAccount")}
             </Button>
           </form>
         </Form>
         
         <div className="text-center mt-6">
           <Link to="/login" className="text-[13px] font-medium text-primary hover:underline">
-            Already have an account? Log in
+            {t("auth.alreadyHaveAccount")} {t("auth.logIn")}
           </Link>
         </div>
       </CardContent>

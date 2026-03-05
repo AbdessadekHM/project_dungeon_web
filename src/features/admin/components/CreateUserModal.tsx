@@ -22,16 +22,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
 import { adminApi } from '@/features/admin/api';
-
-const registerSchema = z.object({
-  username: z.string().min(3, 'Username must be at least 3 characters'),
-  email: z.string().email('Invalid email address'),
-  phone: z.string().min(1, 'Phone number is required'),
-  birth_date: z.string().min(1, 'Birth date is required'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
-});
-
-type FormValues = z.infer<typeof registerSchema>;
+import { useTranslation } from 'react-i18next';
 
 interface CreateUserModalProps {
   open: boolean;
@@ -40,7 +31,18 @@ interface CreateUserModalProps {
 }
 
 export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserModalProps) {
+  const { t } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const registerSchema = z.object({
+    username: z.string().min(3, t('auth.usernameMin')),
+    email: z.string().email(t('auth.emailInvalid')),
+    phone: z.string().min(1, t('auth.phoneRequired')),
+    birth_date: z.string().min(1, t('auth.phoneRequired')), // Reusing phone required for simple date check or add one
+    password: z.string().min(6, t('auth.passwordMin')),
+  });
+
+  type FormValues = z.infer<typeof registerSchema>;
 
   const form = useForm<FormValues>({
     resolver: zodResolver(registerSchema),
@@ -69,7 +71,7 @@ export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserMod
           form.setError(key as any, { type: 'manual', message: details[key][0] });
         });
       } else {
-        alert('Failed to create user. Please try again.');
+        alert(t('auth.registrationFailed'));
       }
     } finally {
       setIsSubmitting(false);
@@ -83,9 +85,9 @@ export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserMod
     }}>
       <DialogContent className="sm:max-w-[500px] border-border bg-card shadow-lg">
         <DialogHeader>
-          <DialogTitle className="text-[15px] font-semibold">Create New User</DialogTitle>
+          <DialogTitle className="text-[15px] font-semibold">{t('admin.createNewUser')}</DialogTitle>
           <DialogDescription className="text-[13px]">
-            Add a new collaborator to the platform.
+            {t('admin.addCollaboratorDesc')}
           </DialogDescription>
         </DialogHeader>
 
@@ -96,7 +98,7 @@ export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserMod
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[13px]">Username</FormLabel>
+                  <FormLabel className="text-[13px]">{t("auth.username")}</FormLabel>
                   <FormControl>
                     <Input placeholder="johndoe" className="bg-secondary/30 border-border text-[13px]" {...field} />
                   </FormControl>
@@ -110,7 +112,7 @@ export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserMod
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[13px]">Email</FormLabel>
+                  <FormLabel className="text-[13px]">{t("auth.email")}</FormLabel>
                   <FormControl>
                     <Input type="email" placeholder="john@example.com" className="bg-secondary/30 border-border text-[13px]" {...field} />
                   </FormControl>
@@ -125,7 +127,7 @@ export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserMod
                 name="phone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[13px]">Phone</FormLabel>
+                    <FormLabel className="text-[13px]">{t("auth.phone")}</FormLabel>
                     <FormControl>
                       <Input placeholder="+1 234 567 890" className="bg-secondary/30 border-border text-[13px]" {...field} />
                     </FormControl>
@@ -139,7 +141,7 @@ export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserMod
                 name="birth_date"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[13px]">Birth Date</FormLabel>
+                    <FormLabel className="text-[13px]">{t("auth.birthDate")}</FormLabel>
                     <FormControl>
                       <Input type="date" className="bg-secondary/30 border-border text-[13px]" {...field} />
                     </FormControl>
@@ -154,7 +156,7 @@ export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserMod
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[13px]">Initial Password</FormLabel>
+                  <FormLabel className="text-[13px]">{t('admin.initialPassword')}</FormLabel>
                   <FormControl>
                     <Input type="password" placeholder="••••••••" className="bg-secondary/30 border-border text-[13px]" {...field} />
                   </FormControl>
@@ -171,7 +173,7 @@ export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserMod
                 disabled={isSubmitting}
                 className="text-[13px] border-border"
               >
-                Cancel
+                {t('common.cancel')}
               </Button>
               <Button 
                 type="submit" 
@@ -186,7 +188,7 @@ export function CreateUserModal({ open, onOpenChange, onSuccess }: CreateUserMod
                 {isSubmitting ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
-                  'Create User'
+                   t('admin.createUser')
                 )}
               </Button>
             </div>

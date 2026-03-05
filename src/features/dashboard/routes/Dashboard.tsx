@@ -10,6 +10,8 @@ import { useAppStore } from '@/stores/useAppStore';
 import { projectApi } from '@/features/projects/api';
 import type { Project } from '@/features/projects/types';
 
+import { useTranslation } from 'react-i18next';
+
 export function Dashboard() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -17,6 +19,7 @@ export function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const { setSelectedProject } = useAppStore();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleProjectSelect = (project: Project) => {
     setSelectedProject(project);
@@ -44,8 +47,8 @@ export function Dashboard() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">Dashboard</h1>
-          <p className="text-muted-foreground mt-1 text-sm">Manage your projects and collaborate with your team.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">{t('dashboard.title')}</h1>
+          <p className="text-muted-foreground mt-1 text-sm">{t('dashboard.description')}</p>
         </div>
         <div className="flex items-center gap-2">
           {/* View Toggle */}
@@ -88,7 +91,7 @@ export function Dashboard() {
             )}
           >
             <Plus className="h-3.5 w-3.5" />
-            New Project
+            {t('common.newProject')}
           </Button>
         </div>
       </div>
@@ -97,16 +100,16 @@ export function Dashboard() {
       {isLoading ? (
         <div className="flex flex-col items-center justify-center p-16 gap-3">
           <div className="h-8 w-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
-          <p className="text-muted-foreground text-sm">Loading projects...</p>
+          <p className="text-muted-foreground text-sm">{t('dashboard.loadingProjects')}</p>
         </div>
       ) : projects.length === 0 ? (
         <div className="text-center py-20 px-8 border border-dashed border-border rounded-xl bg-card/50">
           <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-5">
             <Folder className="h-8 w-8 text-primary" />
           </div>
-          <h3 className="text-lg font-semibold text-foreground mb-2">No projects yet</h3>
+          <h3 className="text-lg font-semibold text-foreground mb-2">{t('dashboard.noProjects')}</h3>
           <p className="text-muted-foreground text-sm mb-6 max-w-sm mx-auto">
-            Create your first project to start tracking tasks, events, and repositories.
+            {t('dashboard.noProjectsDescription')}
           </p>
           <Button 
             onClick={() => setIsCreateModalOpen(true)} 
@@ -118,7 +121,7 @@ export function Dashboard() {
             )}
           >
             <Plus className="h-4 w-4" />
-            Create your first project
+            {t('dashboard.createFirstProject')}
           </Button>
         </div>
       ) : viewMode === 'grid' ? (
@@ -138,10 +141,10 @@ export function Dashboard() {
         <div className="mt-4">
           <div className="flex items-center gap-2 mb-4">
             <Activity className="h-4 w-4 text-muted-foreground" />
-            <h2 className="text-sm font-semibold text-foreground">Recent Activity</h2>
+            <h2 className="text-sm font-semibold text-foreground">{t('dashboard.recentActivity')}</h2>
           </div>
           <div className="rounded-xl border border-border bg-card/30 p-8 text-center">
-            <p className="text-muted-foreground text-sm">No recent activity to display.</p>
+            <p className="text-muted-foreground text-sm">{t('dashboard.noActivity')}</p>
           </div>
         </div>
       )}

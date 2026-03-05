@@ -7,7 +7,11 @@ interface TeamCardProps {
   team: Team;
 }
 
+import { useTranslation } from 'react-i18next';
+
 export function TeamCard({ team }: TeamCardProps) {
+  const { t } = useTranslation();
+  
   return (
     <Card className="rounded-xl card-hover-glow bg-card cursor-pointer overflow-hidden group relative flex flex-col h-full">
       <CardHeader className="pb-2.5 pt-5 px-5">
@@ -28,11 +32,13 @@ export function TeamCard({ team }: TeamCardProps) {
         <div className="flex items-center gap-3 text-[12px] text-muted-foreground">
           <div className="flex items-center gap-1.5 bg-secondary/50 px-2.5 py-1 rounded-lg">
             <ShieldUser className="h-3.5 w-3.5 text-primary/70" />
-            <span className="font-medium text-foreground/80">Owner: #{team.owner}</span>
+            <span className="font-medium text-foreground/80">{t('teams.owner')}: #{team.owner}</span>
           </div>
           <div className="flex items-center gap-1.5">
             <Folder className="h-3.5 w-3.5" />
-            <span>{team.projects.length} project{team.projects.length !== 1 && 's'}</span>
+            <span>
+              {team.projects.length} {t('teams.projects')}
+            </span>
           </div>
         </div>
       </CardContent>
@@ -41,7 +47,7 @@ export function TeamCard({ team }: TeamCardProps) {
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center gap-2">
             <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
-              {team.collaborators.length} Member{team.collaborators.length !== 1 && 's'}
+              {team.collaborators.length} {t('teams.members')}
             </div>
           </div>
           <div className="flex -space-x-2">
@@ -61,7 +67,7 @@ export function TeamCard({ team }: TeamCardProps) {
               </div>
             )}
             {team.collaborators.length === 0 && (
-              <div className="text-[11px] text-muted-foreground italic">Empty</div>
+              <div className="text-[11px] text-muted-foreground italic">{t('teams.empty')}</div>
             )}
           </div>
         </div>
