@@ -7,6 +7,7 @@ import { useAppStore } from '@/stores/useAppStore';
 import { EventCalendar } from '../components/EventCalendar';
 import { GoogleCalendarConnect } from '../components/GoogleCalendarConnect';
 import { CreateEventDialog } from '../components/CreateEventDialog';
+import { EventDetailDialog } from '../components/EventDetailDialog';
 import { calendarApi } from '../api/calendarApi';
 import type { CalendarEvent } from '../types';
 
@@ -18,6 +19,8 @@ export function Events() {
   const [isGoogleConnected, setIsGoogleConnected] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState<{ start: Date; end: Date } | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
+  const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
 
   const fetchEvents = useCallback(async () => {
     if (!selectedProject?.id) return;
@@ -86,10 +89,8 @@ export function Events() {
   };
 
   const handleSelectEvent = (event: CalendarEvent) => {
-    console.log('Event clicked:', event);
-    if (event.meet_link) {
-        window.open(event.meet_link, '_blank');
-    }
+    setSelectedEvent(event);
+    setIsDetailDialogOpen(true);
   };
 
   if (!selectedProject) {
@@ -148,6 +149,12 @@ export function Events() {
         selectedSlot={selectedSlot}
         projectId={selectedProject.id}
         onEventCreated={fetchEvents}
+      />
+
+      <EventDetailDialog
+        open={isDetailDialogOpen}
+        onOpenChange={setIsDetailDialogOpen}
+        event={selectedEvent}
       />
     </div>
   );
