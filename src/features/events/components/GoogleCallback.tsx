@@ -2,11 +2,13 @@ import React, { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { calendarApi } from '@/features/events/api/calendarApi';
 import { Loader2 } from 'lucide-react';
+import { useAppStore } from '@/stores/useAppStore';
 
 export const GoogleCallback: React.FC = () => {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const code = searchParams.get('code');
+    const selectedProjectId = useAppStore((state) => state.selectedProject?.id);
 
     useEffect(() => {
         const handleCallback = async () => {
@@ -15,8 +17,8 @@ export const GoogleCallback: React.FC = () => {
             if (code) {
                 try {
                     await calendarApi.exchangeGoogleCode(code, codeVerifier);
-                    sessionStorage.removeItem('google_code_verifier'); // Clean up
-                    navigate('/dashboard/events');
+                    sessionStorage.removeItem('google_code_verifier');
+                    navigate(`/projects/${selectedProjectId}/events`);
                 } catch (error) {
                     console.error('Failed to exchange code:', error);
                     navigate('/dashboard');
