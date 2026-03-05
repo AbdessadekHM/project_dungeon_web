@@ -12,8 +12,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { calendarApi } from '../api/calendarApi';
-import type { Attendee, CreateEventPayload } from '../types';
+import { calendarApi } from '@/features/events/api/calendarApi';
+import type { Attendee, CreateEventPayload } from '@/features/events/types';
 import { Loader2, Video, Users, Calendar } from 'lucide-react';
 
 interface CreateEventDialogProps {

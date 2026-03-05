@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { issuesApi } from '../api';
+import { issuesApi } from '@/features/issues/api';
 import { projectApi } from '@/features/projects/api';
 import type { Task } from '@/features/tasks/types';
 import { Button } from '@/components/ui/button';

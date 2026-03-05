@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Calendar as CalendarIcon, CheckCircle2, Link2, LogOut } from 'lucide-react';
-import { calendarApi } from '../api/calendarApi';
+import { calendarApi } from '@/features/events/api/calendarApi';
 import { Card, CardContent } from '@/components/ui/card';
 
 interface GoogleCalendarConnectProps {

@@ -4,12 +4,12 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import { useAppStore } from '@/stores/useAppStore';
-import { EventCalendar } from '../components/EventCalendar';
-import { GoogleCalendarConnect } from '../components/GoogleCalendarConnect';
-import { CreateEventDialog } from '../components/CreateEventDialog';
-import { EventDetailDialog } from '../components/EventDetailDialog';
-import { calendarApi } from '../api/calendarApi';
-import type { CalendarEvent } from '../types';
+import { EventCalendar } from '@/features/events/components/EventCalendar';
+import { GoogleCalendarConnect } from '@/features/events/components/GoogleCalendarConnect';
+import { CreateEventDialog } from '@/features/events/components/CreateEventDialog';
+import { EventDetailDialog } from '@/features/events/components/EventDetailDialog';
+import { calendarApi } from '@/features/events/api/calendarApi';
+import type { CalendarEvent } from '@/features/events/types';
 
 export function Events() {
   const { user } = useAuthStore();

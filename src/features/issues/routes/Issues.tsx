@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAppStore } from '@/stores/useAppStore';
-import { issuesApi } from '../api';
+import { issuesApi } from '@/features/issues/api';
 import { projectApi } from '@/features/projects/api';
-import type { Issue } from '../types';
+import type { Issue } from '@/features/issues/types';
 import type { Task } from '@/features/tasks/types';
-import { CreateIssueDialog } from '../components/CreateIssueDialog';
+import { CreateIssueDialog } from '@/features/issues/components/CreateIssueDialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 

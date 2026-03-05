@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import type { CalendarEvent } from '../types';
+import type { CalendarEvent } from '@/features/events/types';
 
 interface EventDetailDialogProps {
   open: boolean;
