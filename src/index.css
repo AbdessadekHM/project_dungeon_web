@@ -136,6 +136,7 @@
   --badge-doc-color: #8B5CF6;
   --badge-doc-bg: rgba(139,92,246,0.08);
   --badge-doc-border: rgba(139,92,246,0.20);
+  --badge-doc-border: rgba(139,92,246,0.20);
   --badge-other-color: #6B7280;
   --badge-other-bg: rgba(107,114,128,0.08);
   --badge-other-border: rgba(107,114,128,0.18);
@@ -207,6 +208,7 @@
   --badge-doc-color: #A78BFA;
   --badge-doc-bg: rgba(167,139,250,0.10);
   --badge-doc-border: rgba(167,139,250,0.20);
+  --badge-doc-border: rgba(167,139,250,0.10);
   --badge-other-color: #9CA3AF;
   --badge-other-bg: rgba(156,163,175,0.08);
   --badge-other-border: rgba(156,163,175,0.15);

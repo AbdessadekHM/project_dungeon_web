@@ -28,11 +28,12 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import MDEditor from '@uiw/react-md-editor';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Sparkles } from 'lucide-react';
 import { taskApi } from '../api';
 import { teamApi } from '@/features/teams/api';
 import { adminApi } from '@/features/admin/api';
 import type { User, Project } from '@/features/projects/types';
+import { GoogleGenAI } from '@google/genai';
 
 const taskSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -53,8 +54,11 @@ interface CreateTaskModalProps {
   project: Project;
 }
 
+const genai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
+
 export function CreateTaskModal({ open, onOpenChange, onSuccess, project }: CreateTaskModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isEnhancing, setIsEnhancing] = useState(false);
   const [assignees, setAssignees] = useState<User[]>([]);
 
   const form = useForm<TaskFormValues>({
@@ -102,6 +106,37 @@ export function CreateTaskModal({ open, onOpenChange, onSuccess, project }: Crea
       fetchAssignees();
     }
   }, [open, form, fetchAssignees]);
+
+  const enhanceDescription = async () => {
+    const currentDescription = form.getValues('description');
+    const title = form.getValues('title');
+    if (!currentDescription.trim()) return;
+
+    setIsEnhancing(true);
+    try {
+      const prompt = `You are a helpful project management assistant. Enhance the following task description to be clearer, more professional, and more actionable. Keep it concise but thorough. Use markdown formatting where appropriate.
+
+Task Title: ${title || 'Untitled Task'}
+Current Description:
+${currentDescription}
+
+Return only the enhanced description, no preamble or explanation.`;
+
+      const response = await genai.models.generateContent({
+        model: 'gemini-2.5-flash-lite',
+        contents: prompt,
+      });
+
+      const enhanced = response.text;
+      if (enhanced) {
+        form.setValue('description', enhanced, { shouldValidate: true });
+      }
+    } catch (error) {
+      console.error('Failed to enhance description:', error);
+    } finally {
+      setIsEnhancing(false);
+    }
+  };
 
   const onSubmit = async (data: TaskFormValues) => {
     setIsSubmitting(true);
@@ -160,7 +195,7 @@ export function CreateTaskModal({ open, onOpenChange, onSuccess, project }: Crea
                 <FormItem data-color-mode="dark">
                   <FormLabel className="text-[13px]">Description</FormLabel>
                   <FormControl>
-                    <div data-color-mode="dark">
+                    <div className="relative" data-color-mode="dark">
                       <MDEditor
                         value={field.value}
                         onChange={field.onChange}
@@ -169,6 +204,26 @@ export function CreateTaskModal({ open, onOpenChange, onSuccess, project }: Crea
                         visibleDragbar={false}
                         className="bg-background!"
                       />
+                      <button
+                        type="button"
+                        onClick={enhanceDescription}
+                        disabled={isEnhancing}
+                        title="Enhance with AI"
+                        className={cn(
+                          "absolute bottom-3 right-3 z-10",
+                          "h-8 w-8 rounded-full flex items-center justify-center",
+                          "bg-linear-to-br from-indigo-500 to-violet-600 text-white shadow-lg",
+                          "hover:brightness-110 hover:shadow-[0_0_12px_rgba(129,140,248,0.5)]",
+                          "transition-all duration-200",
+                          "disabled:opacity-60 disabled:cursor-not-allowed"
+                        )}
+                      >
+                        {isEnhancing ? (
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        ) : (
+                          <Sparkles className="h-3.5 w-3.5" />
+                        )}
+                      </button>
                     </div>
                   </FormControl>
                   <FormMessage />
@@ -327,3 +382,4 @@ export function CreateTaskModal({ open, onOpenChange, onSuccess, project }: Crea
     </Dialog>
   );
 }
+
