@@ -3,6 +3,7 @@ import { AppRoutes } from "./routes"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { ThemeProvider } from "@/components/theme-provider"
 import "@radix-ui/themes/styles.css"
+import { Toaster } from "sonner"
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
           <AppRoutes />
         </TooltipProvider>
       </Theme>
+      <Toaster richColors position="top-right" />
     </ThemeProvider>
   )
 }

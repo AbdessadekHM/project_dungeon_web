@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Link } from "react-router-dom"
+import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -52,8 +53,15 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
       const {user, access, refresh} = response.data
       auth.setAuth(user, {access, refresh})
       onSuccess()
-    } catch (error) {
+    } catch (error: any) {
       console.error("Login failed:", error)
+      const message = error.response?.data?.detail 
+        || error.response?.data?.error 
+        || "Invalid credentials or server error. Please try again."
+        
+      toast.error('Login Failed', {
+        description: message,
+      })
     }
   }
 
@@ -101,8 +109,9 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
                 "hover:brightness-110 hover:shadow-[0_0_0_3px_var(--accent-glow)]",
                 "transition-all duration-150"
               )}
+              disabled={form.formState.isSubmitting}
             >
-              Log In
+              {form.formState.isSubmitting ? "Logging in..." : "Log In"}
             </Button>
             
           </form>
