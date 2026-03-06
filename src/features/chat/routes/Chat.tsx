@@ -1,8 +1,10 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAuthStore } from '@/features/auth/stores/useAuthStore';
 import { useAppStore } from '@/stores/useAppStore';
 import { chatApi, type ChatMessage } from '../api';
+import { projectApi } from '@/features/projects/api';
+import type { User } from '@/features/projects/types';
 import { Send, MessageSquare } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -14,9 +16,17 @@ export function Chat() {
   const { projectId } = useParams<{ projectId: string }>();
   const { user, tokens } = useAuthStore();
   const { selectedProject } = useAppStore();
+  
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isConnected, setIsConnected] = useState(false);
+  
+  const [projectUsers, setProjectUsers] = useState<User[]>([]);
+  const [showMentions, setShowMentions] = useState(false);
+  const [mentionQuery, setMentionQuery] = useState('');
+  const [mentionIndex, setMentionIndex] = useState(0);
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const wsRef = useRef<WebSocket | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
@@ -25,11 +35,24 @@ export function Chat() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Load message history on mount
+  // Load message history & users
   useEffect(() => {
     if (!projectId) return;
+    
     chatApi.getMessages(projectId).then(setMessages).catch(console.error);
-  }, [projectId]);
+
+    if (selectedProject) {
+      projectApi.getUsers().then(allUsers => {
+        const projectUserIds = new Set([
+          selectedProject.owner,
+          ...(selectedProject.collaborators || []),
+        ]);
+        
+        const validUsers = allUsers.filter(u => projectUserIds.has(u.id));
+        setProjectUsers(validUsers);
+      }).catch(console.error);
+    }
+  }, [projectId, selectedProject]);
 
   // Open WebSocket
   useEffect(() => {
@@ -66,9 +89,81 @@ export function Chat() {
     if (!trimmed || !wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) return;
     wsRef.current.send(JSON.stringify({ content: trimmed }));
     setInput('');
+    setShowMentions(false);
   }, [input]);
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setInput(val);
+
+    const cursorPosition = e.target.selectionStart || 0;
+    const textBeforeCursor = val.slice(0, cursorPosition);
+    
+    const match = textBeforeCursor.match(/@(\w*)$/);
+    
+    if (match) {
+      setShowMentions(true);
+      setMentionQuery(match[1].toLowerCase());
+      setMentionIndex(0);
+    } else {
+      setShowMentions(false);
+    }
+  };
+
+  const filteredUsers = useMemo(() => {
+    if (!showMentions) return [];
+    return projectUsers
+      .filter(u => u.username.toLowerCase().includes(mentionQuery));
+  }, [projectUsers, showMentions, mentionQuery]);
+
+  const insertMention = (username: string) => {
+    if (!inputRef.current) return;
+    
+    const cursorPosition = inputRef.current.selectionStart || 0;
+    const textBeforeCursor = input.slice(0, cursorPosition);
+    const textAfterCursor = input.slice(cursorPosition);
+    
+    const newTextBefore = textBeforeCursor.replace(/@\w*$/, `@${username} `);
+    
+    setInput(newTextBefore + textAfterCursor);
+    setShowMentions(false);
+    
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 0);
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (showMentions && filteredUsers.length > 0) {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setMentionIndex(prev => {
+          const next = (prev + 1) % filteredUsers.length;
+          document.getElementById(`mention-item-${next}`)?.scrollIntoView({ block: 'nearest' });
+          return next;
+        });
+        return;
+      }
+      if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setMentionIndex(prev => {
+          const next = (prev - 1 + filteredUsers.length) % filteredUsers.length;
+          document.getElementById(`mention-item-${next}`)?.scrollIntoView({ block: 'nearest' });
+          return next;
+        });
+        return;
+      }
+      if (e.key === 'Enter' || e.key === 'Tab') {
+        e.preventDefault();
+        insertMention(filteredUsers[mentionIndex].username);
+        return;
+      }
+      if (e.key === 'Escape') {
+        setShowMentions(false);
+        return;
+      }
+    }
+
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
@@ -100,8 +195,29 @@ export function Chat() {
     }
   }
 
+  const renderMessageContent = (content: string) => {
+    const parts = content.split(/(@\w+)/g);
+    return parts.map((part, i) => {
+      if (part.startsWith('@')) {
+        const isMe = part.toLowerCase() === `@${user?.username?.toLowerCase()}`;
+        return (
+          <span 
+            key={i} 
+            className={cn(
+              "font-medium px-1 rounded-sm mx-0.5",
+              isMe ? "bg-amber-500/20 text-amber-600 dark:text-amber-400" : "bg-blue-700/20 text-blue-700"
+            )}
+          >
+            {part}
+          </span>
+        );
+      }
+      return <span key={i}>{part}</span>;
+    });
+  };
+
   return (
-    <div className="flex flex-col h-full bg-background">
+    <div className="flex flex-col h-full bg-background relative">
       {/* Header */}
       <div className="flex items-center gap-3 px-6 py-4 border-b border-border bg-card/60 backdrop-blur-sm shrink-0">
         <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -166,13 +282,13 @@ export function Chat() {
                     )}
                     <div
                       className={cn(
-                        'px-3.5 py-2 rounded-2xl text-[13px] leading-relaxed wrap-break-word',
+                        'px-3.5 py-2 rounded-2xl text-[13px] leading-relaxed wrap-break-word whitespace-pre-wrap',
                         isOwn
                           ? 'bg-primary text-primary-foreground rounded-br-sm'
                           : 'bg-secondary text-foreground rounded-bl-sm'
                       )}
                     >
-                      {msg.content}
+                      {renderMessageContent(msg.content)}
                     </div>
                     <span className="text-[10px] text-muted-foreground/60 px-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       {formatTime(msg.created_at)}
@@ -188,13 +304,47 @@ export function Chat() {
       </div>
 
       {/* Input bar */}
-      <div className="shrink-0 px-6 py-4 border-t border-border bg-card/60 backdrop-blur-sm">
+      <div className="shrink-0 px-6 py-4 border-t border-border bg-card/60 backdrop-blur-sm relative">
+        
+        {/* Mention Dropdown */}
+        {showMentions && filteredUsers.length > 0 && (
+          <div className="absolute bottom-full left-6 mb-2 w-64 bg-popover border border-border rounded-xl shadow-lg overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-200 z-50">
+            <div className="px-3 py-2 text-[10px] uppercase font-bold text-muted-foreground tracking-wider border-b border-border/50">
+              Mention a collaborator
+            </div>
+            <div className="py-1 max-h-[240px] overflow-y-auto">
+              {filteredUsers.map((u, i) => (
+                <button
+                  key={u.id}
+                  id={`mention-item-${i}`}
+                  onClick={() => insertMention(u.username)}
+                  className={cn(
+                    "w-full flex items-center gap-3 px-3 py-2 text-left transition-colors",
+                    i === mentionIndex ? "bg-accent text-accent-foreground" : "hover:bg-accent/50 text-foreground"
+                  )}
+                >
+                  <Avatar className="h-6 w-6">
+                    <AvatarFallback className="text-[9px] bg-primary/20 text-primary">
+                      {u.username.substring(0,2).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col">
+                    <span className="text-[13px] font-medium leading-none">{u.username}</span>
+                    <span className="text-[11px] text-muted-foreground mt-0.5">{u.role}</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="flex items-center gap-3 bg-secondary/40 border border-border rounded-xl px-4 py-2.5 focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/20 transition-all duration-200">
           <input
+            ref={inputRef}
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={handleInputChange}
             onKeyDown={handleKeyDown}
-            placeholder="Type a message… (Enter to send)"
+            placeholder="Type a message… (Use @ to mention people, Enter to send)"
             className="flex-1 bg-transparent text-[13px] text-foreground placeholder:text-muted-foreground/60 outline-none"
           />
           <Button
